@@ -1,0 +1,78 @@
+{% extends "layout.html" %}
+
+{% block title %}Home - SignIn{% endblock %}
+
+<style>
+    span:hover {
+    background-color: white;
+    color: black;
+    }
+</style>
+
+{% block body %}
+<body style="background-color: lightgray; margin-top: 5rem;">
+    <br>
+    <body style="margin-top: 5rem;">
+
+        <div class="container">
+            <div class="col-sm-3"></div>
+                <div class="col-sm-6" style="background-color: #0278df;">
+                    <br>
+                    <p style="text-align: center;">
+                        <a href="{{ url_for('home_page') }}" style="font-size: 50px; font-family: 'Brush Script MT', cursive; color: #ffff;">
+                            <strong> Python Flask </strong>
+                        </a>
+                    </p>
+                </div>
+        </div>
+
+        <div class="container">
+            <div>
+                <div class="col-sm-3"></div>
+                    <div class="col-sm-6" style="background-color: rgb(236,236,236); padding: 4rem;">
+                        <form method="post" action="{{url_for('home_page')}}">
+                            
+                            {% if msg == 'GREEN' %}
+                                <div class="col-md-12 mx-auto">
+                                    <input type="text" class="form-control text-center" value="You pressed the green button!" readonly autofocus style="font-size: 2rem; color: green;"></input>
+                                </div>
+                            {% elif msg == 'RED' %}
+                                <div class="col-md-12 mx-auto">
+                                    <input type="text" class="form-control text-center" value="You pressed the red button!" readonly autofocus style="font-size: 2rem; color:  red;"></input>
+                                </div>
+                            {% else %}
+                                <div class="col-md-12 mx-auto">
+                                    <input type="text" class="form-control text-center" value="Please press the button." readonly autofocus style="font-size: 2rem;"></input>
+                                </div>
+                            {% endif %}
+                            
+                            <br><br><br>
+                            <div class="col-md-6 mx-auto text-center">
+                                <button type="submit" class="btn btn-success btn-block" id="sub_button" name="sub_button" value="button_1">GREEN</button> 
+                            </div>
+
+                            <div class="col-md-6 mx-auto text-center">
+                                <button type="submit" class="btn btn-danger btn-block" id="sub_button" name="sub_button" value="button_2">RED</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="col-sm-3"></div>
+            <div class="col-sm-6" style="background-color: rgb(35, 35, 35);">
+                <br>
+                <p style="font-family: Arial; font-size: 15px; text-align: center; color: #ffffff;">
+                    <a href=""  style="color: #0278df;"><span class="glyphicon glyphicon-envelope"></span></a>
+                    <a href=""  style="color: #0278df;"><span class="glyphicon glyphicon-play-circle"></span></a>
+                    <a href=""  style="color: #0278df;"><span class="glyphicon glyphicon-comment"></span></a>
+                </p>
+            </div>
+        </div>
+        <br>
+    </body>
+</body>
+{% endblock %}
+
