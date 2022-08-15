@@ -1,8 +1,12 @@
 from web import app
 from flask import render_template, request
 
+@app.route("/", methods=["GET", "POST"])
+def index_page():
+    return home_page()
+
 # Routes
-@app.route("/python-web-counter/home.html", methods=["GET", "POST"])
+@app.route("/python-web-counter/home.html", methods=["GET","POST"])
 def home_page():
     msg = ""   
     
