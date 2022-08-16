@@ -7,19 +7,6 @@ counter_btn_2 = 0
 
 @app.route("/", methods=["GET", "POST"])
 def index_page():
-    global counter_btn_1
-    global counter_btn_2
-
-    btn = button()
-
-    if button.query.filter_by(id=1):
-        counter_btn_1 = btn.green_click
-        counter_btn_2 = btn.red_click
-    else:
-        btn = button( green_click=0,
-                      red_click=0 )
-        db.session.add(btn)
-        db.session.commit()
     return home_page()
 
 # Routes
@@ -28,9 +15,7 @@ def home_page():
     global counter_btn_1
     global counter_btn_2
 
-    btn = button()
-
-    # btn = button().query.get_or_404(1)
+    btn = button().query.get_or_404(1)
 
     msg = ""
 
