@@ -1,6 +1,6 @@
 from web import app, db
-from web.models import button_1, button_2
-from flask import render_template, request
+from web.models import button_1, button_2, button
+from flask import render_template, request, redirect, url_for
 
 counter_btn_1 = 0
 counter_btn_2 = 0
@@ -15,8 +15,7 @@ def home_page():
     global counter_btn_1
     global counter_btn_2
 
-    btn1 = button_1()
-    btn2 = button_2()
+    btn = button().query.get_or_404(1)
 
     msg = ""
 
@@ -24,22 +23,18 @@ def home_page():
         if request.form['sub_button'] == 'button_1':
             msg = "GREEN"
             counter_btn_1 += 1
-            btn1 = button_1(
-                clicks=counter_btn_1
-            )
-            db.session.add(btn1)
+            btn.green_click = counter_btn_1
+            db.session.add(btn)
             db.session.commit()
-            return render_template("/home.html", msg = msg, btn1 = btn1.clicks, btn2 = btn2.clicks)
+            return render_template("/home.html", msg = msg, btn = btn)
         elif request.form['sub_button'] == 'button_2':
             msg = "RED"
             counter_btn_2 += 1
-            btn2 = button_2(
-                clicks=counter_btn_2
-            )
-            db.session.add(btn2)
+            btn.red_click = counter_btn_2
+            db.session.add(btn)
             db.session.commit()
-            return render_template("/home.html", msg = msg, btn1 = btn1.clicks, btn2 = btn2.clicks)
-    return render_template("/home.html", btn1 = btn1.clicks, btn2 = btn2.clicks)
+            return render_template("/home.html", msg = msg, btn = btn)
+    return render_template("/home.html", btn = btn)
 
 # Errors
 @app.errorhandler(404)
