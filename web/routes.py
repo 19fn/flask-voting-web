@@ -30,7 +30,7 @@ def home_page():
             msg = "RED"
             counter_btn_2 += 1
             btn2 = button_2(
-                clicks=counter_btn_1
+                clicks=counter_btn_2
             )
             db.session.add(btn2)
             db.session.commit()
