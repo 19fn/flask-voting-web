@@ -21,7 +21,9 @@ def home_page():
     msg = ""
     
     if request.method == 'GET':
-        return render_template("/home.html", btn1 = btn1.clicks, btn2 = btn2.clicks)
+        butt1 = button_1.query.order_by(id.desc()).first()
+        butt2 = button_2.query.order_by(id.desc()).first()
+        return render_template("/home.html", butt1 = butt1, butt2 = butt2)
 
     if request.method == 'POST':
         if request.form['sub_button'] == 'button_1':
