@@ -7,11 +7,6 @@ counter_btn_2 = 0
 
 @app.route("/", methods=["GET", "POST"])
 def index_page():
-    return home_page()
-
-# Routes
-@app.route("/python-flask-demo/home.html", methods=["GET","POST"])
-def home_page():
     global counter_btn_1
     global counter_btn_2
 
@@ -25,7 +20,15 @@ def home_page():
                       red_click=0 )
         db.session.add(btn)
         db.session.commit()
+    return home_page()
 
+# Routes
+@app.route("/python-flask-demo/home.html", methods=["GET","POST"])
+def home_page():
+    global counter_btn_1
+    global counter_btn_2
+
+    btn = button()
 
     # btn = button().query.get_or_404(1)
 
