@@ -23,6 +23,8 @@ def home_page():
     else:
         btn = button( green_click=0,
                       red_click=0 )
+        db.session.add(btn)
+        db.session.commit()
 
 
     # btn = button().query.get_or_404(1)
