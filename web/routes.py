@@ -14,9 +14,6 @@ def index_page():
 def home_page():
     global counter_btn_1
     global counter_btn_2
-    
-    btn1 = button_1().first()
-    btn2 = button_2().first()
 
     msg = ""
     
