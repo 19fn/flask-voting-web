@@ -1,23 +1,31 @@
-from web import app
+from web import app, db
+from web.models import button
 from flask import render_template, request
+
+counter_btn_1 = 0
+counter_btn_2 = 0
 
 @app.route("/", methods=["GET", "POST"])
 def index_page():
     return home_page()
 
 # Routes
-@app.route("/python-web-counter/home.html", methods=["GET","POST"])
+@app.route("/python-flask-demo/home.html", methods=["GET","POST"])
 def home_page():
-    msg = ""   
+    global counter_btn_1
+    global counter_btn_2
+    msg = ""
     
     if request.method == 'POST':
         if request.form['sub_button'] == 'button_1':
             msg = "GREEN"
-            return render_template("/home.html", msg = msg)
+            counter_btn_1 += 1
+            return render_template("/home.html", msg = msg, counter_btn_1 = counter_btn_1, counter_btn_2 = counter_btn_2)
         elif request.form['sub_button'] == 'button_2':
             msg = "RED"
-            return render_template("/home.html", msg = msg)
-    return render_template("/home.html")
+            counter_btn_2 += 1
+            return render_template("/home.html", msg = msg, counter_btn_1 = counter_btn_1 , counter_btn_2 = counter_btn_2)
+    return render_template("/home.html", counter_btn_1 = counter_btn_1, counter_btn_2 = counter_btn_2)
 
 # Errors
 @app.errorhandler(404)
