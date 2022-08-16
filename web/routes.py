@@ -1,6 +1,6 @@
 from web import app, db
 from web.models import button
-from flask import render_template, request, redirect, url_for
+from flask import render_template, request
 
 counter_btn_1 = 0
 counter_btn_2 = 0
@@ -16,6 +16,8 @@ def home_page():
     global counter_btn_2
 
     btn = button().query.get_or_404(1)
+    print(btn.green_click)
+    print(btn.red_click)
 
     msg = ""
 
@@ -26,14 +28,14 @@ def home_page():
             btn.green_click = counter_btn_1
             db.session.add(btn)
             db.session.commit()
-            return redirect(url_for("home_page", msg = msg, btn = btn))
+            return render_template("/home.html", msg = msg, btn = btn)
         elif request.form['sub_button'] == 'button_2':
             msg = "RED"
             counter_btn_2 += 1
             btn.red_click = counter_btn_2
             db.session.add(btn)
             db.session.commit()
-            return redirect(url_for("home_page", msg = msg, btn = btn))
+            return render_template("/home.html", msg = msg, btn = btn)
     return render_template("/home.html", btn = btn)
 
 # Errors
