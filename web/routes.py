@@ -14,6 +14,10 @@ def index_page():
 def home_page():
     global counter_btn_1
     global counter_btn_2
+    
+    btn1 = button_1()
+    btn2 = button_2()
+
     msg = ""
     
     if request.method == 'POST':
@@ -25,7 +29,7 @@ def home_page():
             )
             db.session.add(btn1)
             db.session.commit()
-            return render_template("/home.html", msg = msg, counter_btn_1 = counter_btn_1, counter_btn_2 = counter_btn_2)
+            return render_template("/home.html", msg = msg, btn1 = btn1.clicks, btn2 = btn2.clicks)
         elif request.form['sub_button'] == 'button_2':
             msg = "RED"
             counter_btn_2 += 1
@@ -34,8 +38,8 @@ def home_page():
             )
             db.session.add(btn2)
             db.session.commit()
-            return render_template("/home.html", msg = msg, counter_btn_1 = counter_btn_1 , counter_btn_2 = counter_btn_2)
-    return render_template("/home.html", counter_btn_1 = counter_btn_1, counter_btn_2 = counter_btn_2)
+            return render_template("/home.html", msg = msg, btn1 = btn1.clicks, btn2 = btn2.clicks)
+    return render_template("/home.html", btn1 = btn1.clicks, btn2 = btn2.clicks)
 
 # Errors
 @app.errorhandler(404)
