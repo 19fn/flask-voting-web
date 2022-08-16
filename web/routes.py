@@ -1,6 +1,6 @@
 from web import app, db
 from web.models import button
-from flask import render_template, request
+from flask import render_template, request, session
 
 counter_btn_1 = 0
 counter_btn_2 = 0
@@ -14,16 +14,21 @@ def index_page():
 def home_page():
     global counter_btn_1
     global counter_btn_2
+    btn_obj = button.query.filter_by(id=1).first()
     msg = ""
     
     if request.method == 'POST':
         if request.form['sub_button'] == 'button_1':
             msg = "GREEN"
             counter_btn_1 += 1
+            btn_obj.green_click = counter_btn_1
+            db.session.commit()
             return render_template("/home.html", msg = msg, counter_btn_1 = counter_btn_1, counter_btn_2 = counter_btn_2)
         elif request.form['sub_button'] == 'button_2':
             msg = "RED"
             counter_btn_2 += 1
+            btn_obj.red_click = counter_btn_2
+            db.session.commit()
             return render_template("/home.html", msg = msg, counter_btn_1 = counter_btn_1 , counter_btn_2 = counter_btn_2)
     return render_template("/home.html", counter_btn_1 = counter_btn_1, counter_btn_2 = counter_btn_2)
 
