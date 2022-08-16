@@ -1,6 +1,6 @@
 from web import app, db
-from web.models import button
-from flask import render_template, request, session
+from web.models import button_1, button_2
+from flask import render_template, request
 
 counter_btn_1 = 0
 counter_btn_2 = 0
@@ -20,7 +20,7 @@ def home_page():
         if request.form['sub_button'] == 'button_1':
             msg = "GREEN"
             counter_btn_1 += 1
-            btn1 = button(
+            btn1 = button_1(
                 green_click=counter_btn_1
             )
             db.session.add(btn1)
@@ -29,7 +29,7 @@ def home_page():
         elif request.form['sub_button'] == 'button_2':
             msg = "RED"
             counter_btn_2 += 1
-            btn2 = button(
+            btn2 = button_2(
                 red_click=counter_btn_1
             )
             db.session.add(btn2)
