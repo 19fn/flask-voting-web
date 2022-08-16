@@ -15,6 +15,9 @@ def home_page():
     global counter_btn_1
     global counter_btn_2
 
+    btn1 = button_1()
+    btn2 = button_2()
+
     msg = ""
     
     # if request.method == 'GET':
@@ -41,7 +44,7 @@ def home_page():
             db.session.add(btn2)
             db.session.commit()
             return render_template("/home.html", msg = msg, btn2 = btn2.clicks)
-    return render_template("/home.html", btn1 = btn1, btn2 = btn2)
+    return render_template("/home.html", btn1 = btn1.clicks, btn2 = btn2.clicks)
 
 # Errors
 @app.errorhandler(404)
