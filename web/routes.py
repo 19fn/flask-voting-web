@@ -21,7 +21,7 @@ def home_page():
             msg = "GREEN"
             counter_btn_1 += 1
             btn1 = button_1(
-                green_click=counter_btn_1
+                clicks=counter_btn_1
             )
             db.session.add(btn1)
             db.session.commit()
@@ -30,7 +30,7 @@ def home_page():
             msg = "RED"
             counter_btn_2 += 1
             btn2 = button_2(
-                red_click=counter_btn_1
+                clicks=counter_btn_1
             )
             db.session.add(btn2)
             db.session.commit()
