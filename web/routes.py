@@ -15,9 +15,9 @@ def home_page():
     global counter_btn_1
     global counter_btn_2
 
-    btn = button().query.get_or_404(1)
-    print(btn.green_click)
-    print(btn.red_click)
+    btn = button.query.filter_by(id=1).first()
+    counter_btn_1 = btn.green_click
+    counter_btn_2 = btn.red_click
 
     msg = ""
 
