@@ -20,6 +20,9 @@ def home_page():
 
     msg = ""
     
+    if request.method == 'GET':
+        return render_template("/home.html", btn1 = btn1.clicks, btn2 = btn2.clicks)
+
     if request.method == 'POST':
         if request.form['sub_button'] == 'button_1':
             msg = "GREEN"
