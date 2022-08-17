@@ -8,7 +8,9 @@ counter_btn_2 = 0
 
 @app.route("/", methods=["GET", "POST"])
 def index_page():
-    return home_page()
+    if request.method == 'GET':
+        PieChart(counter_btn_1,counter_btn_2)
+        return render_template("/home.html", url ='./web/imgs/plt.png')
 
 # Routes
 @app.route("/python-flask-demo/home.html", methods=["GET","POST"])
@@ -19,10 +21,6 @@ def home_page():
     btn = button.query.filter_by(id=1).first()
     counter_btn_1 = btn.green_click
     counter_btn_2 = btn.red_click
-
-    if request.method == 'GET':
-        PieChart(counter_btn_1,counter_btn_2)
-        return render_template("/home.html", btn = btn, url ='./web/imgs/plt.png')
 
     msg = ""
 
