@@ -1,5 +1,6 @@
 from web import app, db
 from web.models import button
+from web.plot import PieChart
 from flask import render_template, request
 
 counter_btn_1 = 0
@@ -14,6 +15,8 @@ def index_page():
 def home_page():
     global counter_btn_1
     global counter_btn_2
+
+    img = PieChart()
 
     btn = button.query.filter_by(id=1).first()
     counter_btn_1 = btn.green_click
@@ -36,7 +39,7 @@ def home_page():
             db.session.add(btn)
             db.session.commit()
             return render_template("/home.html", msg = msg, btn = btn)
-    return render_template("/home.html", btn = btn)
+    return render_template("/home.html", btn = btn, img = img)
 
 # Errors
 @app.errorhandler(404)
