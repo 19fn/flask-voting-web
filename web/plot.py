@@ -1,3 +1,5 @@
+import io
+from typing import IO
 from matplotlib import pyplot as plt
 from io import StringIO
 import base64
@@ -10,7 +12,7 @@ def PieChart(x,y):
     explode = (0, 0.1)  # only "explode" the 2nd slice (i.e. 'Hogs')
     colours = ('#5cb85c','#d9534f')
 
-    img = StringIO.StringIO()
+    img = io.StringIO()
     fig1, ax1 = plt.subplots()
 
     ax1.pie(sizes, explode=explode, labels=labels, autopct='%1.1f%%',
