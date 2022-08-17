@@ -16,11 +16,11 @@ def home_page():
     global counter_btn_1
     global counter_btn_2
 
-    img = PieChart()
-
     btn = button.query.filter_by(id=1).first()
     counter_btn_1 = btn.green_click
     counter_btn_2 = btn.red_click
+
+    img = PieChart(counter_btn_1,counter_btn_2)
 
     msg = ""
 
