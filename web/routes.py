@@ -39,7 +39,7 @@ def home_page():
             db.session.add(btn)
             db.session.commit()
             return render_template("/home.html", msg = msg, btn = btn)
-    return render_template("/home.html", btn = btn, img = img)
+    return render_template("/home.html", btn = btn, url ='./web/imgs/plt.png')
 
 # Errors
 @app.errorhandler(404)
