@@ -20,7 +20,9 @@ def home_page():
     counter_btn_1 = btn.green_click
     counter_btn_2 = btn.red_click
 
-    img = PieChart(counter_btn_1,counter_btn_2)
+    if request.method == 'GET':
+        PieChart(counter_btn_1,counter_btn_2)
+        return render_template("/home.html", btn = btn, url ='./web/imgs/plt.png')
 
     msg = ""
 
@@ -39,7 +41,7 @@ def home_page():
             db.session.add(btn)
             db.session.commit()
             return render_template("/home.html", msg = msg, btn = btn)
-    return render_template("/home.html", btn = btn, url ='./web/imgs/plt.png')
+    return render_template("/home.html")
 
 # Errors
 @app.errorhandler(404)
