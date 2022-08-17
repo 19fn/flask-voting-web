@@ -20,7 +20,7 @@ def home_page():
     counter_btn_1 = btn.green_click
     counter_btn_2 = btn.red_click
 
-    PieChart(counter_btn_1,counter_btn_2)
+    plot = PieChart(counter_btn_1,counter_btn_2)
 
     msg = ""
 
@@ -31,15 +31,15 @@ def home_page():
             btn.green_click = counter_btn_1
             db.session.add(btn)
             db.session.commit()
-            return render_template("/home.html", msg = msg, btn = btn)
+            return render_template("/home.html", msg = msg, btn = btn, plot = plot)
         elif request.form['sub_button'] == 'button_2':
             msg = "RED"
             counter_btn_2 += 1
             btn.red_click = counter_btn_2
             db.session.add(btn)
             db.session.commit()
-            return render_template("/home.html", msg = msg, btn = btn)
-    return render_template("/home.html", btn = btn, url ='/static/images/new_plot.png')
+            return render_template("/home.html", msg = msg, btn = btn, plot = plot)
+    return render_template("/home.html", btn = btn, plot = plot)
 
 # Errors
 @app.errorhandler(404)
