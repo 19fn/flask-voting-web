@@ -1,47 +1,40 @@
 from web import app, db
 from web.models import button
-from web.plot import PieChart
 from flask import render_template, request
 
-counter_btn_1 = 0
-counter_btn_2 = 0
-
+# Call vote page from root
 @app.route("/", methods=["GET", "POST"])
 def index_page():
-    return home_page()
+    return vote_page()
 
-# Routes
-@app.route("/python-flask-demo/home.html", methods=["GET","POST"])
-def home_page():
+# Here you can vote
+@app.route("/voteapp/voting", methods=["GET","POST"])
+def vote_page():
+    # Define counters as globals variables
     global counter_btn_1
     global counter_btn_2
 
+    # Read counters from the database
     btn = button.query.filter_by(id=1).first()
-    counter_btn_1 = btn.green_click
-    counter_btn_2 = btn.red_click
-
-    plot = PieChart(counter_btn_1,counter_btn_2)
-
-    msg = ""
+    counter_btn_1 = btn.btn_1
+    counter_btn_2 = btn.btn_2
 
     if request.method == 'POST':
         if request.form['sub_button'] == 'button_1':
-            msg = "GREEN"
+            # Add one to button_1 counter
             counter_btn_1 += 1
-            btn.green_click = counter_btn_1
+            # Save the new value for button_1
+            btn.btn_1 = counter_btn_1
             db.session.add(btn)
             db.session.commit()
-            return render_template("/home.html", msg = msg, btn = btn, plot = plot)
+            return render_template("/home.html", btn = btn)
         elif request.form['sub_button'] == 'button_2':
-            msg = "RED"
+            # Add one to button_2 counter
             counter_btn_2 += 1
-            btn.red_click = counter_btn_2
+            # Save the new value for button_2
+            btn.btn_2 = counter_btn_2
             db.session.add(btn)
             db.session.commit()
-            return render_template("/home.html", msg = msg, btn = btn, plot = plot)
-    return render_template("/home.html", btn = btn, plot = plot)
+            return render_template("/home.html", btn = btn)
+    return render_template("/home.html", btn = btn)
 
-# Errors
-@app.errorhandler(404)
-def page_not_found(e):
-    return render_template('404.html'), 404
