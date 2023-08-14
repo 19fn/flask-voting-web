@@ -1,11 +1,11 @@
-# tagged image as logisticasur-img:1.0
+# tagged image as federicocabreraf/votingweb
 FROM python:3.8-slim-buster
 
 # Dependencies
 RUN apt-get update && apt-get install python3-dev default-libmysqlclient-dev build-essential -y
 
 # Working directory
-WORKDIR /app
+WORKDIR /votingweb
 
 # Copy all files
 COPY . .
@@ -13,12 +13,11 @@ COPY . .
 # Open port 80 (http)
 EXPOSE 80
 
-# Set flask environment variable
+# Set flask app environment variable
 ENV FLASK_APP="app"
-ENV FLASK_ENV="production"
 
 # Install virtual environment
-RUN python3 -m venv /app/venv
+RUN python3 -m venv venv
 
 # Enable virtual environment
 ENV PATH="/app/venv/bin:$PATH"
