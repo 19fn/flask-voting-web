@@ -1,4 +1,4 @@
-from web import app
+from votingweb import app
 
 if __name__ == "__main__":
     app.run()
