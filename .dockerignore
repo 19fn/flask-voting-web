@@ -1,9 +1,5 @@
 # Ignore 
 venv
-credentials*
 .gitignore
 .git*
-docker-compose.yaml
-initialize.sh
-Dockerfile
 README.md
