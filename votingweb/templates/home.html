@@ -18,6 +18,16 @@
             <div class="col-sm-3"></div>
                 <!-- head background color -->
                 <div class="col-sm-6" style="background-color: rgb(67 43 104);">
+                    <!-- flash messages -->
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                            {% for category, message in messages %}
+                                <p class="flash-message alert alert-{{ category }}" style="position:fixed; left: 50%; transform: translate(-50%, 0);">
+                                    {{ message }}
+                                </p>
+                            {% endfor %}
+                        {% endif %}
+                    {% endwith %} 
                     <br>
                     <p style="text-align: center;">
                         <a href="{{ url_for('index_page') }}" style="font-size: 50px; font-family:'Georgia'; color: #ffff;">
@@ -34,19 +44,6 @@
             <div>
                 <div class="col-sm-3"></div>
                     <div class="col-sm-6" style="background-color: rgb(236,236,236); padding: 2rem;">
-                       
-                        <!-- Error messages -->
-                        {% with messages = get_flashed_messages(with_categories=true) %}
-                            {% if messages %}
-                                {% for category, message in messages %}
-                                    <div class="flash-message alert alert-{{ category }}">
-                                        <!-- <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span> -->
-                                        <!-- {{ message }} -->
-                                        <div class="flash-message">{{ message }}</div>
-                                    </div>
-                                {% endfor %}
-                            {% endif %}
-                        {% endwith %} 
 
                         <form method="post" action="{{url_for('vote_page')}}">
                             <div class="col-md-6 mx-auto">
