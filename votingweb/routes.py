@@ -1,6 +1,6 @@
 from votingweb import app, db
 from votingweb.models import button
-from flask import render_template, request
+from flask import render_template, request, flash, redirect, url_for
 
 # Call vote page from root
 @app.route("/", methods=["GET", "POST"])
@@ -27,7 +27,8 @@ def vote_page():
             btn.btn_1 = counter_btn_1
             db.session.add(btn)
             db.session.commit()
-            return render_template("/home.html", btn = btn)
+            flash("You clicked left.", category="success")
+            return redirect(url_for("index_page", btn = btn))
         elif request.form['sub_button'] == 'button_2':
             # Add one to button_2 counter
             counter_btn_2 += 1
@@ -35,6 +36,7 @@ def vote_page():
             btn.btn_2 = counter_btn_2
             db.session.add(btn)
             db.session.commit()
-            return render_template("/home.html", btn = btn)
+            flash("You clicked right.", category="danger")
+            return redirect(url_for("index_page", btn = btn))
     return render_template("/home.html", btn = btn)
 
