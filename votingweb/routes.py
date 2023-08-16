@@ -27,7 +27,7 @@ def vote_page():
             btn.btn_1 = counter_btn_1
             db.session.add(btn)
             db.session.commit()
-            flash("You clicked left.", category="success")
+            flash("You voted green.", category="success")
             return redirect(url_for("index_page", btn = btn))
         elif request.form['sub_button'] == 'button_2':
             # Add one to button_2 counter
@@ -36,7 +36,7 @@ def vote_page():
             btn.btn_2 = counter_btn_2
             db.session.add(btn)
             db.session.commit()
-            flash("You clicked right.", category="danger")
+            flash("You voted red.", category="danger")
             return redirect(url_for("index_page", btn = btn))
     return render_template("/home.html", btn = btn)
 
