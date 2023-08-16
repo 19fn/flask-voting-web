@@ -13,6 +13,7 @@ jobs:
 
   build:
     name: Building Docker Image
+    environment: dev
     runs-on: ubuntu-latest
 
     steps:
