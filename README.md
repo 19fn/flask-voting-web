@@ -68,3 +68,19 @@ Per default flask runs on localhost and port 5000.
 
 Open in browser: http://127.0.0.1:5000
 
+### How to run it from a container.
+```
+docker pull federicocabreraf/votingweb
+```
+```
+docker run -d \
+           -p 80:8080 \
+           --name votingweb \
+           --env "DB_HOST=my-database-ip" \
+           --env "DB_PASSWORD=my-super-password" \
+           --env "DB_USER=my-user" \
+           --env "DB_NAME=my-db-name" \
+           --env "FLASK_ENV=development" \
+           --env "FLASK_SECRET_KEY=$(my-secret-key)"
+           federicocabreraf/votingweb
+```
