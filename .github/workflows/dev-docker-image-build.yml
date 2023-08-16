@@ -1,10 +1,12 @@
-name: Dev - Build Docker Image
+name: Build Docker Image
 
 on:
-  # workflow_dispatch
-  push:
-    branches: [ "feature/*" ]
-    tags: ['v[0-9]+.[0-9]+.[0-9]+']
+  workflow_dispatch:
+    inputs:
+      tags:
+        description: 'Tag image'
+        required: true
+        type: string
   pull_request:
     branches: [ "main" ]
 
@@ -29,8 +31,19 @@ jobs:
         password: ${{ secrets.DOCKERHUB_TOKEN }}
     -
       name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v2
+      uses: docker/setup-buildx-action@v2  
     -
+      if: ${{ inputs.tags }} 
+      name: Build and push
+      uses: docker/build-push-action@v4
+      with:
+        context: .
+        file: ./Dockerfile
+        platforms: linux/arm64
+        push: true
+        tags: ${{ secrets.DOCKERHUB_USERNAME }}/votingweb:${{ inputs.tags }}
+    -
+      if: ${{ inputs.tags == '' }}
       name: Build and push
       uses: docker/build-push-action@v4
       with:
