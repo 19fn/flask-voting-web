@@ -5,11 +5,8 @@ on:
     inputs:
       tags:
         description: 'Tag image'
-        required: true
+        required: false
         type: string
-  pull_request:
-    branches: [ "main" ]
-
 
 jobs:
 
