@@ -18,11 +18,13 @@
             <div class="col-sm-3"></div>
                 <!-- head background color -->
                 <div class="col-sm-6" style="background-color: rgb(67 43 104);">
+                    <br>
                     <!-- flash messages -->
                     {% with messages = get_flashed_messages(with_categories=true) %}
                         {% if messages %}
                             {% for category, message in messages %}
                                 <p class="flash-message alert alert-{{ category }}" style="position:fixed; left: 50%; transform: translate(-50%, 0);">
+                                    <span class="glyphicon glyphicon-thumbs-up"></span> &nbsp;
                                     {{ message }}
                                 </p>
                             {% endfor %}
