@@ -39,4 +39,3 @@ def vote_page():
             flash("You voted red.", category="danger")
             return redirect(url_for("index_page", btn = btn))
     return render_template("/home.html", btn = btn)
-
