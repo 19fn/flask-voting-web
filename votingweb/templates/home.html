@@ -11,33 +11,26 @@
 
 {% block body %}
 <body style="background-color: lightgray; margin-top: 5rem;">
-    <br>
     <body style="margin-top: 5rem;">
 
         <div class="container">
             <div class="col-sm-3"></div>
                 <!-- head background color -->
-                <div class="col-sm-6" style="background-color: rgb(67 43 104);">
+                <div class="col-sm-6">
                     <br>
                     <!-- flash messages -->
                     {% with messages = get_flashed_messages(with_categories=true) %}
                         {% if messages %}
                             {% for category, message in messages %}
                                 <p class="flash-message alert alert-{{ category }}" style="position:fixed; left: 50%; transform: translate(-50%, 0);">
-                                    <span class="glyphicon glyphicon-thumbs-up"></span> &nbsp;
+                                    <span class="glyphicon glyphicon-exclamation-sign"></span>
                                     {{ message }}
                                 </p>
                             {% endfor %}
                         {% endif %}
                     {% endwith %} 
-                    <br>
                     <p style="text-align: center;">
-                        <a href="{{ url_for('index_page') }}" style="font-size: 50px; font-family:'Georgia'; color: #ffff;">
-                            <strong> Voting Web </strong>
-                        </a>
-                        <a href="{{ url_for('index_page') }}" style="font-size: 20px; font-family: 'Brush Script MT', cursive; color: #ffff;">
-                            <strong> by @federicocabreraf</strong>
-                        </a>
+                        <br><br>
                     </p>
                 </div>
         </div>
@@ -45,47 +38,33 @@
         <div class="container">
             <div>
                 <div class="col-sm-3"></div>
-                    <div class="col-sm-6" style="background-color: rgb(236,236,236); padding: 2rem;">
+                    <div class="col-sm-6" style="background-color: lightgray; padding: 2rem;">
 
                         <form method="post" action="{{url_for('vote_page')}}">
                             <div class="col-md-6 mx-auto">
-                                <input type="text" class="form-control text-center" value="{{ btn.btn_1 }}" readonly style="font-size: 2rem; color: rgb(78	174	73);"></input>
+                                <b style="font-size: 13rem; color: rgb(78	174	73);">{{ btn.btn_1 }}</b>
                                 <br>
                             </div>
 
                             <div class="col-md-6 mx-auto">
-                                <input type="text" class="form-control text-center" value="{{ btn.btn_2 }}" readonly style="font-size: 2rem; color: rgb(205 61	62);"></input>
+                                <b style="font-size: 13rem; color: rgb(205 61 62);">{{ btn.btn_2 }}</b>
                                 <br>
                             </div>
                         
-                            <br><br>
+                            <br>
 
                             <div class="col-md-6 mx-auto text-center">
-                                <button type="submit" class="btn btn-success btn-block" id="sub_button" name="sub_button" value="button_1">Green</button>
+                                <button type="submit" class="btn btn-success btn-block" id="sub_button" name="sub_button" value="button_1"><span class="glyphicon glyphicon-thumbs-up"></span></button>
                                 <br> 
                             </div>
                             <div class="col-md-6 mx-auto text-center">
-                                <button type="submit" class="btn btn-danger btn-block" id="sub_button" name="sub_button" value="button_2">Red</button>
+                                <button type="submit" class="btn btn-danger btn-block" id="sub_button" name="sub_button" value="button_2"><span class="glyphicon glyphicon-thumbs-up"></span></button>
                             </div>
                         </form>
                     </div>
                 </div>
             </div>
         </div>
-
-        <div class="container">
-            <div class="col-sm-3"></div>
-            <!-- footer background color -->
-            <div class="col-sm-6" style="background-color: rgb(35, 35, 35);">
-                <br>
-                <p style="font-family: Arial; font-size: 15px; text-align: center; color: #ffffff;">
-                    <a href=""  style="color: #ffffff;"><span class="glyphicon glyphicon-envelope"></span></a>
-                    <a href=""  style="color: #ffffff;"><span class="glyphicon glyphicon-play-circle"></span></a>
-                    <a href=""  style="color: #ffffff;"><span class="glyphicon glyphicon-comment"></span></a>
-                </p>
-            </div>
-        </div>
-        <br>
     </body>
     <script>
         $(document).ready(function() {
