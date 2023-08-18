@@ -29,4 +29,4 @@ RUN python3 -m pip install --upgrade pip
 RUN python3 -m pip install -r requirements.txt
 
 # Run flask --host=0.0.0.0 (This tells operating system to listen on all public IPs.)
-CMD ["python3", "-m", "flask", "run", "--host=0.0.0.0", "--port=8080"]
+CMD ["python3", "-m", "flask", "run", "--host=0.0.0.0", "--port=80"]
