@@ -1,5 +1,7 @@
 # Flask Voting Web
 
+Requires Python 3.14+ (the Docker image uses `python:3.14-slim-trixie`).
+
 ### How to run it from Docker container.
 First, pull the image
 ```
@@ -19,16 +21,16 @@ docker run -d \
            --env "DB_USER=my-user" \
            --env "DB_PASSWORD=my-super-password" \
            --env "FLASK_ENV=development" \
-           --env "FLASK_SECRET_KEY=my-secret-key"
+           --env "FLASK_SECRET_KEY=my-secret-key" \
            federicocabreraf/votingweb
 ```
 
 Open in browser: http://your-ip
 
 ### How to run it locally.
-You should create a python3 virtual environment first.
+You should create a Python 3.14+ virtual environment first.
 ```
-python3 -m venv venv
+python3.14 -m venv venv
 ```
 Active them.
 
