@@ -1,4 +1,7 @@
-from votingweb import app, db
+import click
+
+from votingweb import db
+
 
 # Define button table
 class button(db.Model):
@@ -6,11 +9,20 @@ class button(db.Model):
     btn_1 = db.Column(db.Integer(), nullable=False)
     btn_2 = db.Column(db.Integer(), nullable=False)
 
-with app.app_context():
-    # Create button table
-    db.create_all()
 
-    # Add init value to button table (only once)
+def init_db():
+    """Create the button table and its single row. Safe to run repeatedly.
+
+    Must be called inside an application context.
+    """
+    db.create_all()
     if db.session.get(button, 1) is None:
         db.session.add(button(id=1, btn_1=0, btn_2=0))
         db.session.commit()
+
+
+@click.command("init-db")
+def init_db_command():
+    """Create the tables and the initial vote row."""
+    init_db()
+    click.echo("Database initialized.")
