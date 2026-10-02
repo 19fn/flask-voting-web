@@ -2,6 +2,7 @@ from flask import Blueprint, render_template, request, flash, redirect, url_for
 
 from votingweb import db
 from votingweb.models import COUNTERS_ID, button
+from votingweb.results import vote_results
 
 bp = Blueprint("main", __name__)
 
@@ -41,4 +42,6 @@ def vote_page():
             db.session.commit()
             flash("You voted red.", category="danger")
             return redirect(url_for(".index_page", btn = btn))
-    return render_template("/home.html", btn = btn)
+    return render_template(
+        "/home.html", btn=btn, results=vote_results(btn.btn_1, btn.btn_2)
+    )
