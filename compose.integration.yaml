@@ -1,0 +1,39 @@
+# Integration tests: the app code against a real, throwaway MySQL.
+# Run with tests/integration/run.sh, which also removes everything afterwards.
+#
+# Isolated from the development stack (compose.yaml): own project name, no
+# published ports, no named volume (the data directory is a tmpfs), and fixed
+# throwaway credentials, so no .env is needed.
+name: flask-voting-web-integration
+
+services:
+  db:
+    image: mysql:8.4.11
+    environment:
+      MYSQL_DATABASE: votingweb_test
+      MYSQL_USER: votingweb_test
+      MYSQL_PASSWORD: test-only-password
+      MYSQL_ROOT_PASSWORD: test-only-root-password
+    tmpfs:
+      - /var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "--silent"]
+      interval: 3s
+      timeout: 5s
+      retries: 30
+      start_period: 20s
+
+  tests:
+    build:
+      context: .
+      dockerfile: Dockerfile.integration
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_HOST: db
+      DB_PORT: "3306"
+      DB_NAME: votingweb_test
+      DB_USER: votingweb_test
+      DB_PASSWORD: test-only-password
+      FLASK_SECRET_KEY: integration-test-secret
