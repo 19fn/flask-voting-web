@@ -114,12 +114,23 @@ The app is built by `votingweb.create_app(config=None)`. On startup it creates t
 `button` table and its single row if they are missing; this is safe to repeat.
 You can also run it on its own with `flask init-db`.
 
-### Running the tests
+### Running the unit tests
+The unit tests live in `tests/unit`. They use SQLite and Flask's test client, so
+they need no Docker, no MySQL and no environment variables. Each test builds its
+own app with a fresh database.
+
+Install the development dependencies (they include the runtime ones) in your
+virtual environment
 ```
-python3 -m unittest
+pip3 install -r requirements-dev.txt
 ```
-The tests use SQLite and need no database or environment variables. To build an
-app with your own settings, pass a mapping, e.g.
+Run the unit tests
+```
+python -m pytest tests/unit
+```
+They are plain `unittest` test cases, so `python3 -m unittest` also runs them
+with only `requirements.txt` installed. To build an app with your own settings,
+pass a mapping, e.g.
 `create_app({"SQLALCHEMY_DATABASE_URI": "sqlite://", "INIT_DB": False})`.
 
 Open in browser: http://127.0.0.1:5000
