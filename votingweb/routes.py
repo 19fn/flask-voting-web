@@ -15,7 +15,7 @@ def vote_page():
     global counter_btn_2
 
     # Read counters from the database
-    btn = button.query.filter_by(id=1).first()
+    btn = db.session.execute(db.select(button).filter_by(id=1)).scalar_one()
     counter_btn_1 = btn.btn_1
     counter_btn_2 = btn.btn_2
 

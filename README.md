@@ -1,5 +1,7 @@
 # Flask Voting Web
 
+Requires Python 3.14+ (the Docker image uses `python:3.14-slim-trixie`).
+
 ### How to run it from Docker container.
 First, pull the image
 ```
@@ -8,7 +10,7 @@ docker pull federicocabreraf/votingweb
 Then, 
 ```
 # you should have an existing db ready for allow connections
-# setting flask_env to development turns on debug mode
+# setting FLASK_DEBUG=1 turns on debug mode
 # to generate random secret key use: openssl rand -base64 64
 
 docker run -d \
@@ -18,17 +20,17 @@ docker run -d \
            --env "DB_NAME=my-db-name" \
            --env "DB_USER=my-user" \
            --env "DB_PASSWORD=my-super-password" \
-           --env "FLASK_ENV=development" \
-           --env "FLASK_SECRET_KEY=my-secret-key"
+           --env "FLASK_DEBUG=1" \
+           --env "FLASK_SECRET_KEY=my-secret-key" \
            federicocabreraf/votingweb
 ```
 
 Open in browser: http://your-ip
 
 ### How to run it locally.
-You should create a python3 virtual environment first.
+You should create a Python 3.14+ virtual environment first.
 ```
-python3 -m venv venv
+python3.14 -m venv venv
 ```
 Active them.
 
@@ -60,9 +62,9 @@ export DB_PASSWORD=db-password
 
 Flask
 
-Set this to 'development' to turn on debug-mode
+Set this to 1 to turn on debug mode
 ```
-export FLASK_ENV=flask-env
+export FLASK_DEBUG=1
 ```
 Generate secret key from shell using 
 ```
