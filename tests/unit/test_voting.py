@@ -130,6 +130,26 @@ class RenderTests(VotingTestCase):
                 )
 
 
+class ResultsRenderTests(VotingTestCase):
+    """The home page shows the total, percentages and a split bar (#23)."""
+
+    def test_page_shows_total_and_percentages(self):
+        self.set_counts(1, 2)
+        html = self.client.get("/").get_data(as_text=True)
+        self.assertRegex(html, r'id="vote-total-count">\s*3\s*<')
+        self.assertRegex(html, r'id="green-percent"[^>]*>\s*33\.3%\s*<')
+        self.assertRegex(html, r'id="red-percent"[^>]*>\s*66\.7%\s*<')
+        self.assertIn("width: 33.3%;", html)
+        self.assertIn("width: 66.7%;", html)
+
+    def test_zero_votes_show_zero_percent(self):
+        html = self.client.get("/").get_data(as_text=True)
+        self.assertRegex(html, r'id="vote-total-count">\s*0\s*<')
+        self.assertRegex(html, r'id="green-percent"[^>]*>\s*0%\s*<')
+        self.assertRegex(html, r'id="red-percent"[^>]*>\s*0%\s*<')
+        self.assertIn('id="vote-share-bar"', html)
+
+
 class VoteTests(VotingTestCase):
     def assert_redirects_home(self, resp):
         self.assertEqual(resp.status_code, 302)
