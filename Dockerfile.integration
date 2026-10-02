@@ -1,0 +1,18 @@
+# Test image for the integration tests (see compose.integration.yaml).
+# Same base and application code as the production Dockerfile, plus the
+# development dependencies (pytest).
+FROM python:3.14-slim-trixie
+
+WORKDIR /votingweb
+
+ENV VIRTUAL_ENV=/votingweb/venv
+RUN python3 -m venv "$VIRTUAL_ENV"
+ENV PATH="$VIRTUAL_ENV/bin:$PATH"
+
+COPY requirements.txt requirements-dev.txt ./
+RUN python3 -m pip install --no-cache-dir --upgrade pip \
+    && python3 -m pip install --no-cache-dir -r requirements-dev.txt
+
+COPY . .
+
+CMD ["python3", "-m", "pytest", "tests/integration"]

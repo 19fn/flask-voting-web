@@ -14,34 +14,31 @@ def index_page():
 # Here you can vote
 @bp.route("/voting", methods=["GET","POST"])
 def vote_page():
-    # Define counters as globals variables
-    global counter_btn_1
-    global counter_btn_2
+    if request.method == 'POST':
+        # Increment in SQL, not read-modify-write in Python: concurrent votes
+        # would otherwise overwrite each other and lose increments.
+        sub_button = request.form['sub_button']
+        if sub_button == 'button_1':
+            db.session.execute(
+                db.update(button)
+                .where(button.id == COUNTERS_ID)
+                .values(btn_1=button.btn_1 + 1)
+            )
+            db.session.commit()
+            flash("You voted green.", category="success")
+            return redirect(url_for(".index_page"))
+        elif sub_button == 'button_2':
+            db.session.execute(
+                db.update(button)
+                .where(button.id == COUNTERS_ID)
+                .values(btn_2=button.btn_2 + 1)
+            )
+            db.session.commit()
+            flash("You voted red.", category="danger")
+            return redirect(url_for(".index_page"))
 
     # Read counters from the database
     btn = db.session.execute(db.select(button).filter_by(id=COUNTERS_ID)).scalar_one()
-    counter_btn_1 = btn.btn_1
-    counter_btn_2 = btn.btn_2
-
-    if request.method == 'POST':
-        if request.form['sub_button'] == 'button_1':
-            # Add one to button_1 counter
-            counter_btn_1 += 1
-            # Save the new value for button_1
-            btn.btn_1 = counter_btn_1
-            db.session.add(btn)
-            db.session.commit()
-            flash("You voted green.", category="success")
-            return redirect(url_for(".index_page", btn = btn))
-        elif request.form['sub_button'] == 'button_2':
-            # Add one to button_2 counter
-            counter_btn_2 += 1
-            # Save the new value for button_2
-            btn.btn_2 = counter_btn_2
-            db.session.add(btn)
-            db.session.commit()
-            flash("You voted red.", category="danger")
-            return redirect(url_for(".index_page", btn = btn))
     return render_template(
         "/home.html", btn=btn, results=vote_results(btn.btn_1, btn.btn_2)
     )

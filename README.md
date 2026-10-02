@@ -162,4 +162,29 @@ with only `requirements.txt` installed. To build an app with your own settings,
 pass a mapping, e.g.
 `create_app({"SQLALCHEMY_DATABASE_URI": "sqlite://", "INIT_DB": False})`.
 
+### Running the integration tests
+The integration tests live in `tests/integration` and check the app against a real
+MySQL 8.4 database (startup initialization creates exactly one counters row, also
+after restarts and concurrent startups; votes persist; concurrent votes lose no
+increments). They are not part of the default run: `python -m pytest` and
+`python -m pytest tests/unit` only run the unit tests.
+
+You only need Docker with Compose. From the repository root
+```
+tests/integration/run.sh
+```
+This uses `compose.integration.yaml` to start a throwaway MySQL (own project name,
+no published ports, data on a tmpfs, fixed test-only credentials, so neither your
+`.env` nor the development stack and its `db-data` volume are used) and runs the
+tests in a test container built from `Dockerfile.integration`. The script exits
+non-zero if anything fails, and always removes its containers, network and volumes
+afterwards, whether the run passes, fails or is interrupted.
+
+To run the tests directly against a MySQL you already have (it is emptied: the
+tables are dropped before every test, so never point it at real data), set the
+`DB_*` or `DATABASE_URL` variables and run
+```
+python -m pytest tests/integration
+```
+
 Open in browser: http://127.0.0.1:5000
