@@ -6,7 +6,7 @@ import unittest
 from unittest import mock
 
 from votingweb import create_app, database_url_from_env, db
-from votingweb.models import button, init_db
+from votingweb.models import COUNTERS_ID, button, init_db
 
 DB_VARS = ("DATABASE_URL", "DB_HOST", "DB_PORT", "DB_NAME", "DB_USER", "DB_PASSWORD")
 
@@ -76,6 +76,39 @@ class VotingTests(unittest.TestCase):
             init_db()
             init_db()
         self.assertEqual(self.counts(), [(0, 0)])
+
+    def test_restart_keeps_one_row_and_totals(self):
+        # Regression for #16: every startup used to insert another row.
+        self.client.post("/voting", data={"sub_button": "button_1"})
+        self.client.post("/voting", data={"sub_button": "button_2"})
+        self.client.post("/voting", data={"sub_button": "button_2"})
+        uri = self.app.config["SQLALCHEMY_DATABASE_URI"]
+        for _ in range(2):
+            with self.app.app_context():
+                db.engine.dispose()
+            self.app = create_app({"SQLALCHEMY_DATABASE_URI": uri, "SECRET_KEY": "test"})
+        self.assertEqual(self.counts(), [(1, 2)])
+        with self.app.app_context():
+            self.assertEqual(db.session.get(button, COUNTERS_ID).btn_2, 2)
+
+    def test_concurrent_insert_conflict_is_ignored(self):
+        # Simulate losing the race: the row did not exist when this process
+        # checked, but another process inserted it before our commit.
+        self.client.post("/voting", data={"sub_button": "button_1"})
+        with self.app.app_context():
+            real_get = db.session.get
+            calls = []
+
+            def get(model, ident, *args, **kwargs):
+                calls.append(ident)
+                if len(calls) == 1:
+                    return None
+                return real_get(model, ident, *args, **kwargs)
+
+            with mock.patch.object(db.session, "get", side_effect=get):
+                init_db()
+            self.assertEqual(len(calls), 2)
+        self.assertEqual(self.counts(), [(1, 0)])
 
     def test_pages_render(self):
         for path in ("/", "/voting"):

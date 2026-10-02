@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for
 
 from votingweb import db
-from votingweb.models import button
+from votingweb.models import COUNTERS_ID, button
 
 bp = Blueprint("main", __name__)
 
@@ -18,7 +18,7 @@ def vote_page():
     global counter_btn_2
 
     # Read counters from the database
-    btn = db.session.execute(db.select(button).filter_by(id=1)).scalar_one()
+    btn = db.session.execute(db.select(button).filter_by(id=COUNTERS_ID)).scalar_one()
     counter_btn_1 = btn.btn_1
     counter_btn_2 = btn.btn_2
 
