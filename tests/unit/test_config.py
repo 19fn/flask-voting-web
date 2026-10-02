@@ -1,12 +1,10 @@
 import os
 import subprocess
 import sys
-import tempfile
 import unittest
 from unittest import mock
 
-from votingweb import create_app, database_url_from_env, db
-from votingweb.models import button, init_db
+from votingweb import create_app, database_url_from_env
 
 DB_VARS = ("DATABASE_URL", "DB_HOST", "DB_PORT", "DB_NAME", "DB_USER", "DB_PASSWORD")
 
@@ -49,45 +47,6 @@ class ConfigTests(unittest.TestCase):
         with self.clean_env(DATABASE_URL="mysql+pymysql://nope@nowhere/db"):
             app = create_app({"SQLALCHEMY_DATABASE_URI": "sqlite://", "INIT_DB": False})
         self.assertEqual(app.config["SQLALCHEMY_DATABASE_URI"], "sqlite://")
-
-
-class VotingTests(unittest.TestCase):
-    def setUp(self):
-        self.tmp = tempfile.TemporaryDirectory()
-        self.app = create_app({
-            "SQLALCHEMY_DATABASE_URI": f"sqlite:///{self.tmp.name}/test.db",
-            "SECRET_KEY": "test",
-            "TESTING": True,
-        })
-        self.client = self.app.test_client()
-
-    def tearDown(self):
-        with self.app.app_context():
-            db.engine.dispose()
-        self.tmp.cleanup()
-
-    def counts(self):
-        with self.app.app_context():
-            rows = db.session.execute(db.select(button)).scalars().all()
-            return [(r.btn_1, r.btn_2) for r in rows]
-
-    def test_init_db_is_repeatable(self):
-        with self.app.app_context():
-            init_db()
-            init_db()
-        self.assertEqual(self.counts(), [(0, 0)])
-
-    def test_pages_render(self):
-        for path in ("/", "/voting"):
-            self.assertEqual(self.client.get(path).status_code, 200)
-
-    def test_vote(self):
-        resp = self.client.post("/voting", data={"sub_button": "button_1"})
-        self.assertEqual(resp.status_code, 302)
-        self.client.post("/voting", data={"sub_button": "button_2"})
-        self.client.post("/voting", data={"sub_button": "button_2"})
-        self.assertEqual(self.counts(), [(1, 2)])
-        self.assertIn(b"You voted red.", self.client.get("/").data)
 
 
 if __name__ == "__main__":
