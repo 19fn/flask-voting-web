@@ -1,0 +1,46 @@
+# Local development stack: the Flask app and a MySQL database.
+# Configuration is read from .env (copy it from .env.example first).
+name: flask-voting-web
+
+services:
+  db:
+    image: mysql:8.4.11
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE:?set MYSQL_DATABASE in .env (cp .env.example .env)}
+      MYSQL_USER: ${MYSQL_USER:?set MYSQL_USER in .env (cp .env.example .env)}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:?set MYSQL_PASSWORD in .env (cp .env.example .env)}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?set MYSQL_ROOT_PASSWORD in .env (cp .env.example .env)}
+    volumes:
+      - db-data:/var/lib/mysql
+    healthcheck:
+      # TCP on 127.0.0.1 only answers once the real server is up; the
+      # temporary server used during first-time initialization has
+      # networking disabled.
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "--silent"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 30s
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_HOST: db
+      DB_PORT: "3306"
+      DB_NAME: ${MYSQL_DATABASE}
+      DB_USER: ${MYSQL_USER}
+      DB_PASSWORD: ${MYSQL_PASSWORD}
+      FLASK_SECRET_KEY: ${FLASK_SECRET_KEY:?set FLASK_SECRET_KEY in .env (cp .env.example .env)}
+      FLASK_DEBUG: ${FLASK_DEBUG:-0}
+    ports:
+      - "127.0.0.1:${APP_PORT:-8080}:8080"
+
+volumes:
+  db-data:
