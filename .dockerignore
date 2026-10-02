@@ -4,3 +4,6 @@ venv
 .git*
 README.md
 creds.conf
+.env
+.env.*
+compose*.yaml

@@ -27,6 +27,35 @@ docker run -d \
 
 Open in browser: http://your-ip
 
+### How to run it with Docker Compose (app + MySQL)
+`compose.yaml` starts the app and a MySQL 8.4 database, so you need no database
+of your own. The app starts only after the database reports healthy.
+
+Create your local configuration once (`.env` is git-ignored; change the
+placeholder passwords and secret key if you like)
+```
+cp .env.example .env
+```
+Start the stack (builds the image from the `Dockerfile`)
+```
+docker compose up --build
+```
+Open in browser: http://localhost:8080 (set `APP_PORT` in `.env` to use another port).
+Add `-d` to run in the background and `docker compose logs -f` to follow the logs.
+
+Stop the stack. Votes are kept in the `db-data` named volume, so they survive
+this and app restarts (`docker compose restart app`)
+```
+docker compose down
+```
+Reset the stack: also delete the database volume, so all votes are lost and the
+next `up` starts from an empty database
+```
+docker compose down -v
+```
+If you change the MySQL user, password or database name in `.env` after the
+first start, reset the stack: MySQL only applies them to an empty volume.
+
 ### How to run it locally.
 You should create a Python 3.14+ virtual environment first.
 ```
