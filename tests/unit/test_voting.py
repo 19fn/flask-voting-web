@@ -8,10 +8,11 @@ variables. Written as ``unittest.TestCase`` classes so both
 import re
 import tempfile
 import unittest
+from unittest import mock
 from urllib.parse import urlsplit
 
 from votingweb import create_app, db
-from votingweb.models import button, init_db
+from votingweb.models import COUNTERS_ID, button, init_db
 
 GREEN = "button_1"
 RED = "button_2"
@@ -40,7 +41,7 @@ class VotingTestCase(unittest.TestCase):
 
     def set_counts(self, green, red):
         with self.app.app_context():
-            row = db.session.get(button, 1)
+            row = db.session.get(button, COUNTERS_ID)
             row.btn_1, row.btn_2 = green, red
             db.session.commit()
 
@@ -69,6 +70,44 @@ class CleanDatabaseTests(VotingTestCase):
             init_db()
             init_db()
         self.assertEqual(self.rows(), [(0, 0)])
+
+
+class StartupRegressionTests(VotingTestCase):
+    """Regression tests for #16: startup must keep exactly one counters row."""
+
+    def test_restart_keeps_one_row_and_totals(self):
+        # Every startup used to insert another row.
+        self.vote(GREEN)
+        self.vote(RED)
+        self.vote(RED)
+        uri = self.app.config["SQLALCHEMY_DATABASE_URI"]
+        for _ in range(2):
+            with self.app.app_context():
+                db.session.remove()
+                db.engine.dispose()
+            self.app = create_app({"SQLALCHEMY_DATABASE_URI": uri, "SECRET_KEY": "test"})
+        self.assertEqual(self.rows(), [(1, 2)])
+        with self.app.app_context():
+            self.assertEqual(db.session.get(button, COUNTERS_ID).btn_2, 2)
+
+    def test_concurrent_insert_conflict_is_ignored(self):
+        # Simulate losing the race: the row did not exist when this process
+        # checked, but another process inserted it before our commit.
+        self.vote(GREEN)
+        with self.app.app_context():
+            real_get = db.session.get
+            calls = []
+
+            def get(model, ident, *args, **kwargs):
+                calls.append(ident)
+                if len(calls) == 1:
+                    return None
+                return real_get(model, ident, *args, **kwargs)
+
+            with mock.patch.object(db.session, "get", side_effect=get):
+                init_db()
+            self.assertEqual(len(calls), 2)
+        self.assertEqual(self.rows(), [(1, 0)])
 
 
 class RenderTests(VotingTestCase):
