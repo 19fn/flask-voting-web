@@ -2,88 +2,54 @@
 
 {% block title %}Flask - Voting Web{% endblock %}
 
-<style>
-    span:hover {
-    background-color: white;
-    color: black;
-    }
-</style>
-
 {% block body %}
-<body style="background-color: lightgray; margin-top: 5rem;">
-    <body style="margin-top: 5rem;">
+<div class="row justify-content-center">
+    <div class="col-12 col-md-10 col-lg-8">
 
-        <div class="container">
-            <div class="col-sm-3"></div>
-                <!-- head background color -->
-                <div class="col-sm-6">
-                    <br>
-                    <!-- flash messages -->
-                    {% with messages = get_flashed_messages(with_categories=true) %}
-                        {% if messages %}
-                            {% for category, message in messages %}
-                                <p class="flash-message alert alert-{{ category }}" style="position:fixed; left: 50%; transform: translate(-50%, 0);">
-                                    <span class="glyphicon glyphicon-exclamation-sign"></span>
-                                    {{ message }}
-                                </p>
-                            {% endfor %}
-                        {% endif %}
-                    {% endwith %} 
-                    <p style="text-align: center;">
-                        <br><br>
-                    </p>
+        <!-- flash messages: dismissible, auto-hidden after a delay (static/js/flash.js) -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% for category, message in messages %}
+                <div class="flash-message alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
-        </div>
+            {% endfor %}
+        {% endwith %}
 
-        <div class="container">
-            <div>
-                <div class="col-sm-3"></div>
-                    <div class="col-sm-6" style="background-color: lightgray; padding: 2rem;">
-
-                        <form method="post" action="{{url_for('main.vote_page')}}">
-                            <div class="col-md-6 mx-auto">
-                                <b style="font-size: 13rem; color: rgb(78	174	73);">{{ btn.btn_1 }}</b>
-                                <p class="vote-percent text-center" id="green-percent" style="font-size: 3rem; color: rgb(78	174	73);">{{ results.green.label }}</p>
-                            </div>
-
-                            <div class="col-md-6 mx-auto">
-                                <b style="font-size: 13rem; color: rgb(205 61 62);">{{ btn.btn_2 }}</b>
-                                <p class="vote-percent text-center" id="red-percent" style="font-size: 3rem; color: rgb(205 61 62);">{{ results.red.label }}</p>
-                            </div>
-                        
-                            <div class="col-md-12">
-                                <p class="text-center" id="vote-total" style="font-size: 2.5rem;">Total votes: <span id="vote-total-count">{{ results.total }}</span></p>
-                                <!-- split bar: green share on the left, red share on the right -->
-                                <div class="progress" id="vote-share-bar" style="height: 2.5rem;">
-                                    {% if results.total %}
-                                    <div class="progress-bar progress-bar-success" role="progressbar" style="width: {{ results.green.percent }}%;" aria-valuenow="{{ results.green.percent }}" aria-valuemin="0" aria-valuemax="100" title="Green {{ results.green.label }}"></div>
-                                    <div class="progress-bar progress-bar-danger" role="progressbar" style="width: {{ results.red.percent }}%;" aria-valuenow="{{ results.red.percent }}" aria-valuemin="0" aria-valuemax="100" title="Red {{ results.red.label }}"></div>
-                                    {% endif %}
-                                </div>
-                            </div>
-
-                            <div class="col-md-6 mx-auto text-center">
-                                <button type="submit" class="btn btn-success btn-block" id="sub_button" name="sub_button" value="button_1"><span class="glyphicon glyphicon-thumbs-up"></span></button>
-                                <br> 
-                            </div>
-                            <div class="col-md-6 mx-auto text-center">
-                                <button type="submit" class="btn btn-danger btn-block" id="sub_button" name="sub_button" value="button_2"><span class="glyphicon glyphicon-thumbs-up"></span></button>
-                            </div>
-                        </form>
-                    </div>
+        <form method="post" action="{{ url_for('main.vote_page') }}" class="vote-panel p-3 p-md-4">
+            <div class="row text-center g-3">
+                <div class="col-6">
+                    <b class="vote-count vote-count-green">{{ btn.btn_1 }}</b>
+                    <p class="vote-percent vote-count-green" id="green-percent">{{ results.green.label }}</p>
+                </div>
+                <div class="col-6">
+                    <b class="vote-count vote-count-red">{{ btn.btn_2 }}</b>
+                    <p class="vote-percent vote-count-red" id="red-percent">{{ results.red.label }}</p>
                 </div>
             </div>
-        </div>
-    </body>
-    <script>
-        $(document).ready(function() {
-            setTimeout(function() {
-                $('.flash-message').fadeOut('slow', function() {
-                    $(this).remove();
-                });
-            }, 666); // Dismiss after 666 ms
-        });
-    </script>
-</body>
-{% endblock %}
 
+            <p class="text-center vote-total my-3" id="vote-total">Total votes: <span id="vote-total-count">{{ results.total }}</span></p>
+            <!-- split bar: green share on the left, red share on the right -->
+            <div class="progress vote-bar mb-4" id="vote-share-bar">
+                {% if results.total %}
+                <div class="progress-bar bg-success" role="progressbar" style="width: {{ results.green.percent }}%;" aria-label="Green share" aria-valuenow="{{ results.green.percent }}" aria-valuemin="0" aria-valuemax="100" title="Green {{ results.green.label }}"></div>
+                <div class="progress-bar bg-danger" role="progressbar" style="width: {{ results.red.percent }}%;" aria-label="Red share" aria-valuenow="{{ results.red.percent }}" aria-valuemin="0" aria-valuemax="100" title="Red {{ results.red.label }}"></div>
+                {% endif %}
+            </div>
+
+            <div class="row g-3">
+                <div class="col-12 col-sm-6">
+                    <button type="submit" class="btn btn-success btn-lg w-100" id="vote-green" name="sub_button" value="button_1">
+                        <span aria-hidden="true">&#128077;</span> Vote green
+                    </button>
+                </div>
+                <div class="col-12 col-sm-6">
+                    <button type="submit" class="btn btn-danger btn-lg w-100" id="vote-red" name="sub_button" value="button_2">
+                        <span aria-hidden="true">&#128078;</span> Vote red
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
