@@ -41,33 +41,31 @@
                     <div class="col-sm-6" style="background-color: lightgray; padding: 2rem;">
 
                         <form method="post" action="{{url_for('main.vote_page')}}">
-                            <div class="col-md-6 mx-auto">
-                                <b style="font-size: 13rem; color: rgb(78	174	73);">{{ btn.btn_1 }}</b>
-                                <p class="vote-percent text-center" id="green-percent" style="font-size: 3rem; color: rgb(78	174	73);">{{ results.green.label }}</p>
-                            </div>
-
-                            <div class="col-md-6 mx-auto">
-                                <b style="font-size: 13rem; color: rgb(205 61 62);">{{ btn.btn_2 }}</b>
-                                <p class="vote-percent text-center" id="red-percent" style="font-size: 3rem; color: rgb(205 61 62);">{{ results.red.label }}</p>
-                            </div>
-                        
-                            <div class="col-md-12">
+                            <section id="vote-results" aria-labelledby="results-heading" class="col-md-12">
+                                <h2 id="results-heading" class="sr-only">Vote results</h2>
+                                <ul class="list-unstyled text-center" style="font-size: 2.5rem; word-wrap: break-word;">
+                                    <li id="green-result"><strong>Green:</strong> <b id="green-count">{{ results.green.count }}</b> votes, <span class="vote-percent" id="green-percent">{{ results.green.label }}</span></li>
+                                    <li id="red-result"><strong>Red:</strong> <b id="red-count">{{ results.red.count }}</b> votes, <span class="vote-percent" id="red-percent">{{ results.red.label }}</span></li>
+                                </ul>
                                 <p class="text-center" id="vote-total" style="font-size: 2.5rem;">Total votes: <span id="vote-total-count">{{ results.total }}</span></p>
-                                <!-- split bar: green share on the left, red share on the right -->
-                                <div class="progress" id="vote-share-bar" style="height: 2.5rem;">
+                                {% if not results.total %}
+                                <p class="text-center" id="no-votes" role="status" style="font-size: 2.5rem;"><strong>No votes yet</strong></p>
+                                {% endif %}
+                                <!-- decorative split bar: hidden from assistive tech, text above carries the data -->
+                                <div class="progress" id="vote-share-bar" aria-hidden="true" style="height: 2.5rem;">
                                     {% if results.total %}
-                                    <div class="progress-bar progress-bar-success" role="progressbar" style="width: {{ results.green.percent }}%;" aria-valuenow="{{ results.green.percent }}" aria-valuemin="0" aria-valuemax="100" title="Green {{ results.green.label }}"></div>
-                                    <div class="progress-bar progress-bar-danger" role="progressbar" style="width: {{ results.red.percent }}%;" aria-valuenow="{{ results.red.percent }}" aria-valuemin="0" aria-valuemax="100" title="Red {{ results.red.label }}"></div>
+                                    <div class="progress-bar progress-bar-success" style="width: {{ results.green.percent }}%;"></div>
+                                    <div class="progress-bar progress-bar-danger" style="width: {{ results.red.percent }}%;"></div>
                                     {% endif %}
                                 </div>
-                            </div>
+                            </section>
 
                             <div class="col-md-6 mx-auto text-center">
-                                <button type="submit" class="btn btn-success btn-block" id="sub_button" name="sub_button" value="button_1"><span class="glyphicon glyphicon-thumbs-up"></span></button>
+                                <button type="submit" class="btn btn-success btn-block" id="sub_button" name="sub_button" value="button_1" aria-label="Vote green"><span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span></button>
                                 <br> 
                             </div>
                             <div class="col-md-6 mx-auto text-center">
-                                <button type="submit" class="btn btn-danger btn-block" id="sub_button" name="sub_button" value="button_2"><span class="glyphicon glyphicon-thumbs-up"></span></button>
+                                <button type="submit" class="btn btn-danger btn-block" id="sub_button" name="sub_button" value="button_2" aria-label="Vote red"><span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span></button>
                             </div>
                         </form>
                     </div>
