@@ -1,4 +1,9 @@
-from flask import Blueprint, render_template, request, flash, redirect, url_for
+from flask import (
+    Blueprint, current_app, jsonify, render_template, request, flash, redirect,
+    url_for,
+)
+from sqlalchemy import text
+from sqlalchemy.exc import SQLAlchemyError
 
 from votingweb import db
 from votingweb.models import COUNTERS_ID, button
@@ -42,3 +47,20 @@ def vote_page():
     return render_template(
         "/home.html", btn=btn, results=vote_results(btn.btn_1, btn.btn_2)
     )
+
+
+@bp.route("/healthz", methods=["GET"])
+def healthz():
+    """Health check: 200 if the database answers a read-only query, else 503.
+
+    Only ``SELECT 1`` is run, so no data is modified. The response never
+    includes the exception text, which can contain hosts or credentials; the
+    details go to the server log only.
+    """
+    try:
+        db.session.execute(text("SELECT 1"))
+    except SQLAlchemyError:
+        db.session.rollback()
+        current_app.logger.error("Health check failed: database unreachable")
+        return jsonify(status="error", detail="database unavailable"), 503
+    return jsonify(status="ok"), 200
