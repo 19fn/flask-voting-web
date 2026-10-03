@@ -162,6 +162,19 @@ with only `requirements.txt` installed. To build an app with your own settings,
 pass a mapping, e.g.
 `create_app({"SQLALCHEMY_DATABASE_URI": "sqlite://", "INIT_DB": False})`.
 
+### Auditing the dependencies
+`pip-audit` is pinned in `requirements-dev.txt` only. In a virtual environment
+run
+```
+pip3 install -r requirements-dev.txt
+pip-audit -r requirements.txt
+pip-audit -r requirements-dev.txt
+```
+Each command prints "No known vulnerabilities found" or the affected package
+and the fixed version. Upgrade the pin in the matching file, then rerun the
+unit tests and the Docker build. Every package in `requirements.txt` is either
+imported by the app or a pinned transitive dependency (see the comments there).
+
 ### Running the integration tests
 The integration tests live in `tests/integration` and check the app against a real
 MySQL 8.4 database (startup initialization creates exactly one counters row, also
