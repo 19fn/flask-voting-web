@@ -1,68 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <title>{% block title %}{% endblock %}</title>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.8/css/all.css" integrity="sha384-3AB7yXWz4OeoZcPbieVW64vVXEwADiYyAEhwilzWsLw+9FgqpyjjStpPnpBO8o8S" crossorigin="anonymous">
-        <!-- favicon tab image -->
-        <!-- <link rel="icon" href="/Static/img/favicon.png"> -->
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-        
-        <style>
-            .container {
-                color: black;
-            }
-            
-            /* Add background color and some padding to the footer */
-            footer {
-                background-color: #3e3e3f;
-                padding: 15px;
-            }
-
-            hr { 
-                display: block;
-                margin-top: 0.5em;
-                margin-bottom: 0.5em;
-                margin-left: auto;
-                margin-right: auto;
-                border-style: inset;
-                border-width: 1px;
-            }
-        </style>
-    </head>
-
-        <nav class="navbar navbar-expand-lg navbar-fixed-top" style="background-color: black; margin:auto; display: flex; justify-content: center;">
-            <div class="container-fluid">
-                <div class="collapse navbar-collapse" id="myNavbar" style="font-size: 30px;">
-                    <ul class="nav navbar-nav">
-                        <li><a href="{{ url_for('main.index_page')}}"><b style="color: white;">&nbsp;V O T E</b></a></li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
-
-    <body>
-
-        {% block body %}  
-        {% endblock %}
-
-        <!-- <div class="container">
-            <div class="col-sm-3"></div>
-            <div class="col-sm-6" style="background-color: rgb(35, 35, 35);">
-                <br>
-                <p style="font-family: Arial; font-size: 15px; text-align: center; color: #ffffff;">
-                    <a href=""  style="color: #ffffff;"><span class="glyphicon glyphicon-envelope"></span></a>
-                    <a href=""  style="color: #ffffff;"><span class="glyphicon glyphicon-play-circle"></span></a>
-                    <a href=""  style="color: #ffffff;"><span class="glyphicon glyphicon-comment"></span></a>
-                </p>
-            </div>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}{% endblock %}</title>
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+          integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
+          crossorigin="anonymous">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <nav class="navbar navbar-dark bg-black site-nav">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('main.index_page') }}">VOTE</a>
         </div>
-        <br> -->
+    </nav>
 
-        <!-- Scripts -->
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-    </body>
+    <main class="container py-4">
+        {% block body %}{% endblock %}
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+            crossorigin="anonymous"></script>
+    <script src="{{ url_for('static', filename='js/flash.js') }}"></script>
+</body>
 </html>

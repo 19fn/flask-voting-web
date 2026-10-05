@@ -2,6 +2,28 @@
 
 Requires Python 3.14+ (the Docker image uses `python:3.14-slim-trixie`).
 
+### Quick start with Make
+`make` is the primary entry point for local tasks (macOS and Linux; the
+Compose and integration targets also need Docker with Compose). Run `make` or
+`make help` to list the targets.
+
+| Target | What it does |
+|---|---|
+| `make install` | Creates the `venv` virtual environment and installs the runtime and development dependencies |
+| `make run` | Runs the app locally with Flask on http://127.0.0.1:5000 |
+| `make up` | Builds and starts the Compose stack (app + MySQL) in the background; creates `.env` from `.env.example` if missing |
+| `make down` | Stops the Compose stack; votes are kept |
+| `make logs` | Follows the Compose logs |
+| `make reset` | Stops the Compose stack and deletes its volumes; all votes are lost |
+| `make test` | Runs the unit tests |
+| `make test-integration` | Runs the integration tests against a throwaway MySQL |
+| `make check` | Runs every local quality gate (currently the unit tests) |
+
+Every target exits non-zero when its step fails. Use another interpreter with
+`make install PYTHON=python3.14`, another virtual environment directory with
+`VENV=...`, and another address with `make run HOST=0.0.0.0 PORT=8000`.
+The sections below describe what the targets do and the underlying commands.
+
 ### How to run it from Docker container.
 First, pull the image
 ```
@@ -28,6 +50,15 @@ docker run -d \
 Open in browser: http://your-ip
 
 ### How to run it with Docker Compose (app + MySQL)
+```
+make up       # build and start; open http://localhost:8080
+make logs     # follow the logs
+make down     # stop, keep the votes
+make reset    # stop and delete the database volume
+```
+`make up` creates `.env` from `.env.example` when it does not exist yet.
+The plain `docker compose` commands behind them are described here.
+
 `compose.yaml` starts the app and a MySQL 8.4 database, so you need no database
 of your own. The app starts only after the database reports healthy.
 
@@ -43,6 +74,9 @@ docker compose up --build
 Open in browser: http://localhost:8080 (set `APP_PORT` in `.env` to use another port).
 Add `-d` to run in the background and `docker compose logs -f` to follow the logs.
 
+The app exposes `GET /healthz` (`200 {"status": "ok"}`, or `503` when the database
+is unreachable); the Compose `app` service uses it as its healthcheck.
+
 Stop the stack. Votes are kept in the `db-data` named volume, so they survive
 this and app restarts (`docker compose restart app`)
 ```
@@ -57,7 +91,15 @@ If you change the MySQL user, password or database name in `.env` after the
 first start, reset the stack: MySQL only applies them to an empty volume.
 
 ### How to run it locally.
-You should create a Python 3.14+ virtual environment first.
+```
+make install   # creates venv/ and installs the dependencies
+make run       # http://127.0.0.1:5000
+```
+`make run` uses `DATABASE_URL` or the `DB_*` variables from your environment
+(see below) and falls back to a SQLite file `db.sqlite3` when neither is set. It
+sets a throwaway `FLASK_SECRET_KEY` if you have none.
+
+The manual steps follow. First create a Python 3.14+ virtual environment.
 ```
 python3.14 -m venv venv
 ```
@@ -143,24 +185,45 @@ The app is built by `votingweb.create_app(config=None)`. On startup it creates t
 `button` table and its single row if they are missing; this is safe to repeat.
 You can also run it on its own with `flask init-db`.
 
+### Running all local checks
+```
+make check
+```
+runs every local quality gate that exists: currently the unit tests. It does not
+include `make test-integration`, which needs Docker.
+
 ### Running the unit tests
 The unit tests live in `tests/unit`. They use SQLite and Flask's test client, so
 they need no Docker, no MySQL and no environment variables. Each test builds its
 own app with a fresh database.
 
-Install the development dependencies (they include the runtime ones) in your
-virtual environment
+```
+make test
+```
+This installs the development dependencies into `venv` if needed and runs
+`python -m pytest tests/unit`. Without Make: install them (they include the
+runtime ones) in your virtual environment and run pytest
 ```
 pip3 install -r requirements-dev.txt
-```
-Run the unit tests
-```
 python -m pytest tests/unit
 ```
 They are plain `unittest` test cases, so `python3 -m unittest` also runs them
 with only `requirements.txt` installed. To build an app with your own settings,
 pass a mapping, e.g.
 `create_app({"SQLALCHEMY_DATABASE_URI": "sqlite://", "INIT_DB": False})`.
+
+### Auditing the dependencies
+`pip-audit` is pinned in `requirements-dev.txt` only. In a virtual environment
+run
+```
+pip3 install -r requirements-dev.txt
+pip-audit -r requirements.txt
+pip-audit -r requirements-dev.txt
+```
+Each command prints "No known vulnerabilities found" or the affected package
+and the fixed version. Upgrade the pin in the matching file, then rerun the
+unit tests and the Docker build. Every package in `requirements.txt` is either
+imported by the app or a pinned transitive dependency (see the comments there).
 
 ### Running the integration tests
 The integration tests live in `tests/integration` and check the app against a real
@@ -170,6 +233,10 @@ increments). They are not part of the default run: `python -m pytest` and
 `python -m pytest tests/unit` only run the unit tests.
 
 You only need Docker with Compose. From the repository root
+```
+make test-integration
+```
+which runs
 ```
 tests/integration/run.sh
 ```
