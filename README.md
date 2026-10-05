@@ -74,6 +74,9 @@ docker compose up --build
 Open in browser: http://localhost:8080 (set `APP_PORT` in `.env` to use another port).
 Add `-d` to run in the background and `docker compose logs -f` to follow the logs.
 
+The app exposes `GET /healthz` (`200 {"status": "ok"}`, or `503` when the database
+is unreachable); the Compose `app` service uses it as its healthcheck.
+
 Stop the stack. Votes are kept in the `db-data` named volume, so they survive
 this and app restarts (`docker compose restart app`)
 ```

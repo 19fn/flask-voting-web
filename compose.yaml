@@ -41,6 +41,14 @@ services:
       FLASK_DEBUG: ${FLASK_DEBUG:-0}
     ports:
       - "127.0.0.1:${APP_PORT:-8080}:8080"
+    healthcheck:
+      # The slim image has no curl; use the Python interpreter instead.
+      # urlopen raises on non-2xx, so a 503 marks the container unhealthy.
+      test: ["CMD", "python3", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8080/healthz', timeout=3)"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
 
 volumes:
   db-data:
