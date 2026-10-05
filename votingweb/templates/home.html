@@ -16,26 +16,36 @@
             {% endfor %}
         {% endwith %}
 
-        <form method="post" action="{{ url_for('main.vote_page') }}" class="vote-panel p-3 p-md-4">
-            <div class="row text-center g-3">
-                <div class="col-6">
-                    <b class="vote-count vote-count-green">{{ btn.btn_1 }}</b>
-                    <p class="vote-percent vote-count-green" id="green-percent">{{ results.green.label }}</p>
+<form method="post" action="{{ url_for('main.vote_page') }}" class="vote-panel p-3 p-md-4">
+            <section id="vote-results" aria-labelledby="results-heading">
+                <h2 id="results-heading" class="visually-hidden">Vote results</h2>
+                <div class="row text-center g-3">
+                    <div class="col-12 col-sm-6" id="green-result">
+                        <strong>Green:</strong>
+                        <b class="vote-count vote-count-green" id="green-count">{{ results.green.count }}</b>
+                        <span class="visually-hidden">votes,</span>
+                        <p class="vote-percent vote-count-green" id="green-percent">{{ results.green.label }}</p>
+                    </div>
+                    <div class="col-12 col-sm-6" id="red-result">
+                        <strong>Red:</strong>
+                        <b class="vote-count vote-count-red" id="red-count">{{ results.red.count }}</b>
+                        <span class="visually-hidden">votes,</span>
+                        <p class="vote-percent vote-count-red" id="red-percent">{{ results.red.label }}</p>
+                    </div>
                 </div>
-                <div class="col-6">
-                    <b class="vote-count vote-count-red">{{ btn.btn_2 }}</b>
-                    <p class="vote-percent vote-count-red" id="red-percent">{{ results.red.label }}</p>
-                </div>
-            </div>
 
-            <p class="text-center vote-total my-3" id="vote-total">Total votes: <span id="vote-total-count">{{ results.total }}</span></p>
-            <!-- split bar: green share on the left, red share on the right -->
-            <div class="progress vote-bar mb-4" id="vote-share-bar">
-                {% if results.total %}
-                <div class="progress-bar bg-success" role="progressbar" style="width: {{ results.green.percent }}%;" aria-label="Green share" aria-valuenow="{{ results.green.percent }}" aria-valuemin="0" aria-valuemax="100" title="Green {{ results.green.label }}"></div>
-                <div class="progress-bar bg-danger" role="progressbar" style="width: {{ results.red.percent }}%;" aria-label="Red share" aria-valuenow="{{ results.red.percent }}" aria-valuemin="0" aria-valuemax="100" title="Red {{ results.red.label }}"></div>
+                <p class="text-center vote-total my-3" id="vote-total">Total votes: <span id="vote-total-count">{{ results.total }}</span></p>
+                {% if not results.total %}
+                <p class="text-center vote-total" id="no-votes" role="status"><strong>No votes yet</strong></p>
                 {% endif %}
-            </div>
+                <!-- decorative split bar: hidden from assistive tech, text above carries the data -->
+                <div class="progress vote-bar mb-4" id="vote-share-bar" aria-hidden="true">
+                    {% if results.total %}
+                    <div class="progress-bar bg-success" style="width: {{ results.green.percent }}%;"></div>
+                    <div class="progress-bar bg-danger" style="width: {{ results.red.percent }}%;"></div>
+                    {% endif %}
+                </div>
+            </section>
 
             <div class="row g-3">
                 <div class="col-12 col-sm-6">
