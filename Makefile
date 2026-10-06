@@ -13,7 +13,7 @@ HOST ?= 127.0.0.1
 PORT ?= 5000
 
 .DEFAULT_GOAL := help
-.PHONY: help install run up down logs reset lint test test-integration check
+.PHONY: help install migrate run up down logs reset lint test test-integration check
 
 help: ## List the available targets
 	@echo "Usage: make <target>"
@@ -34,13 +34,21 @@ $(STAMP): requirements.txt requirements-dev.txt
 install: ## Create the virtual environment and install runtime and dev dependencies
 	$(MAKE) -B $(STAMP)
 
-run: $(STAMP) ## Run the app locally with Flask (DATABASE_URL or DB_*; defaults to SQLite db.sqlite3)
+run: $(STAMP) ## Run the app locally (SQLite db.sqlite3 by default; local init mode)
 	@if [ -z "$$DATABASE_URL" ] && [ -z "$$DB_HOST" ]; then \
 		echo "No DATABASE_URL or DB_HOST set: using SQLite file db.sqlite3"; \
 		export DATABASE_URL="sqlite:///$(CURDIR)/db.sqlite3"; \
 	fi; \
 	export FLASK_SECRET_KEY="$${FLASK_SECRET_KEY:-dev-only-secret-key}"; \
+	export DB_SCHEMA_MODE="$${DB_SCHEMA_MODE:-init}"; \
 	exec $(VPY) -m flask --app app run --host $(HOST) --port $(PORT)
+
+migrate: $(STAMP) ## Apply database migrations (flask db upgrade) to DATABASE_URL or DB_*
+	@if [ -z "$$DATABASE_URL" ] && [ -z "$$DB_HOST" ]; then \
+		export DATABASE_URL="sqlite:///$(CURDIR)/db.sqlite3"; \
+	fi; \
+	export FLASK_SECRET_KEY="$${FLASK_SECRET_KEY:-dev-only-secret-key}"; \
+	DB_SCHEMA_MODE=skip exec $(VPY) -m flask --app app db upgrade
 
 .env:
 	cp .env.example .env

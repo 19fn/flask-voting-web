@@ -88,7 +88,9 @@ class StartupRegressionTests(VotingTestCase):
             with self.app.app_context():
                 db.session.remove()
                 db.engine.dispose()
-            self.app = create_app({"SQLALCHEMY_DATABASE_URI": uri, "SECRET_KEY": "test"})
+            self.app = create_app(
+                {"SQLALCHEMY_DATABASE_URI": uri, "SECRET_KEY": "test", "TESTING": True}
+            )
         self.assertEqual(self.rows(), [(1, 2)])
         with self.app.app_context():
             self.assertEqual(db.session.get(button, COUNTERS_ID).btn_2, 2)

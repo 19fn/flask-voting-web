@@ -23,11 +23,12 @@ services:
       retries: 20
       start_period: 30s
 
-  app:
+  # One-off release step: applies the schema migrations, then exits. The app
+  # only starts after it succeeded; the app itself never runs DDL.
+  migrate:
     build:
       context: .
       dockerfile: Dockerfile
-    restart: unless-stopped
     depends_on:
       db:
         condition: service_healthy
@@ -38,7 +39,29 @@ services:
       DB_USER: ${MYSQL_USER}
       DB_PASSWORD: ${MYSQL_PASSWORD}
       FLASK_SECRET_KEY: ${FLASK_SECRET_KEY:?set FLASK_SECRET_KEY in .env (cp .env.example .env)}
+      DB_SCHEMA_MODE: skip
+      RUN_MIGRATIONS: "0"
+    command: ["python3", "-m", "flask", "db", "upgrade"]
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+    environment:
+      DB_HOST: db
+      DB_PORT: "3306"
+      DB_NAME: ${MYSQL_DATABASE}
+      DB_USER: ${MYSQL_USER}
+      DB_PASSWORD: ${MYSQL_PASSWORD}
+      FLASK_SECRET_KEY: ${FLASK_SECRET_KEY:?set FLASK_SECRET_KEY in .env (cp .env.example .env)}
       FLASK_DEBUG: ${FLASK_DEBUG:-0}
+      RUN_MIGRATIONS: "0"
     ports:
       - "127.0.0.1:${APP_PORT:-8080}:8080"
     healthcheck:

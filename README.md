@@ -29,7 +29,11 @@ First, pull the image
 ```
 docker pull federicocabreraf/votingweb
 ```
-Then, 
+Then apply the database migrations once (the app refuses to start on an
+unmigrated database; back up first, see [docs/migrations.md](docs/migrations.md)),
+with the same `--env` options as below plus `DB_SCHEMA_MODE=skip`, running
+`python3 -m flask db upgrade` in the image instead of the default command.
+Then start the app,
 ```
 # you should have an existing db ready for allow connections
 # setting FLASK_DEBUG=1 turns on debug mode
@@ -180,10 +184,25 @@ Per default flask runs on localhost and port 5000.
 | `DB_PASSWORD` | if no `DATABASE_URL` | – | Database password (escaped automatically) |
 | `FLASK_SECRET_KEY` | yes | – | Signs the session; needed for the vote flash messages |
 | `FLASK_DEBUG` | no | `0` | `1` turns on debug mode |
+| `DB_SCHEMA_MODE` | no | `validate` | `validate`: startup only checks the schema is at the migration head and fails otherwise (production). `init`: create tables directly (local/test; `make run` uses it). `skip`: no check (used by `flask db ...`). |
 
-The app is built by `votingweb.create_app(config=None)`. On startup it creates the
-`button` table and its single row if they are missing; this is safe to repeat.
-You can also run it on its own with `flask init-db`.
+The app is built by `votingweb.create_app(config=None)`. By default startup is
+read-only: it checks that the database is at the current migration head and
+refuses to start (with the fix in the message) when migrations are pending, the
+schema version is unknown, or the database was never migrated. It never runs DDL,
+so any number of workers can start concurrently. `DB_SCHEMA_MODE=init` (or
+`TESTING` in the config) keeps the explicit local/test path that creates the
+`button` table and its single row directly, also available as `flask init-db`.
+
+### Database migrations
+Schema changes are versioned with Flask-Migrate (Alembic) in `migrations/` and
+applied as a separate release step. See [docs/migrations.md](docs/migrations.md)
+for first install, upgrading an existing installation, backups, rollback/restore
+and failure recovery. In short
+```
+make migrate                 # or: DB_SCHEMA_MODE=skip flask db upgrade
+```
+The Compose stack runs this in its `migrate` service before the app starts.
 
 ### Running all local checks
 ```

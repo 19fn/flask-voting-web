@@ -5,6 +5,7 @@ Flask-SQLAlchemy==3.1.1
 PyMySQL==1.2.3
 SQLAlchemy==2.1.1
 click==8.5.0
+Flask-Migrate==4.1.0
 # Transitive dependencies, pinned explicitly so builds are reproducible
 # (pip-audit also needs a full pin list):
 # Flask requires blinker, itsdangerous, Jinja2, Werkzeug (and click)
@@ -14,5 +15,8 @@ Jinja2==3.1.6
 Werkzeug==3.1.9
 # Jinja2 and Werkzeug require MarkupSafe
 MarkupSafe==3.0.3
+# Flask-Migrate requires alembic; alembic requires Mako
+alembic==1.20.0
+Mako==1.4.3
 # SQLAlchemy requires typing_extensions
 typing_extensions==4.16.0
