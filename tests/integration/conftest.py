@@ -3,6 +3,7 @@
 The database comes from DATABASE_URL or DB_HOST/DB_NAME/DB_USER/DB_PASSWORD,
 exactly like the app. Run them through ``tests/integration/run.sh``.
 """
+
 import pytest
 
 from votingweb import create_app, db

@@ -5,6 +5,7 @@ database, so tests are independent and need neither MySQL nor environment
 variables. Written as ``unittest.TestCase`` classes so both
 ``python -m pytest tests/unit`` and ``python -m unittest`` run them.
 """
+
 import re
 import tempfile
 import unittest
@@ -21,11 +22,13 @@ RED = "button_2"
 class VotingTestCase(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
-        self.app = create_app({
-            "SQLALCHEMY_DATABASE_URI": f"sqlite:///{self.tmp.name}/test.db",
-            "SECRET_KEY": "test",
-            "TESTING": True,
-        })
+        self.app = create_app(
+            {
+                "SQLALCHEMY_DATABASE_URI": f"sqlite:///{self.tmp.name}/test.db",
+                "SECRET_KEY": "test",
+                "TESTING": True,
+            }
+        )
         self.client = self.app.test_client()
 
     def tearDown(self):
@@ -117,17 +120,13 @@ class RenderTests(VotingTestCase):
             with self.subTest(path=path):
                 resp = self.client.get(path)
                 self.assertEqual(resp.status_code, 200)
-                self.assertEqual(
-                    self.rendered_counters(resp.get_data(as_text=True)), [7, 3]
-                )
+                self.assertEqual(self.rendered_counters(resp.get_data(as_text=True)), [7, 3])
 
     def test_pages_render_zero_counters(self):
         for path in ("/", "/voting"):
             with self.subTest(path=path):
                 resp = self.client.get(path)
-                self.assertEqual(
-                    self.rendered_counters(resp.get_data(as_text=True)), [0, 0]
-                )
+                self.assertEqual(self.rendered_counters(resp.get_data(as_text=True)), [0, 0])
 
 
 class ResultsRenderTests(VotingTestCase):
@@ -176,9 +175,7 @@ class VoteTests(VotingTestCase):
         self.assertEqual(self.flashes(), [("danger", "You voted red.")])
 
     def test_flash_is_shown_after_redirect(self):
-        resp = self.client.post(
-            "/voting", data={"sub_button": RED}, follow_redirects=True
-        )
+        resp = self.client.post("/voting", data={"sub_button": RED}, follow_redirects=True)
         html = resp.get_data(as_text=True)
         self.assertEqual(resp.status_code, 200)
         self.assertIn("alert-danger", html)

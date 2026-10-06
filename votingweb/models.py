@@ -25,7 +25,7 @@ def init_db():
     """
     try:
         db.create_all()
-    except (OperationalError, ProgrammingError):
+    except OperationalError, ProgrammingError:
         # Another process may have created the table between the existence
         # check and CREATE TABLE. Only ignore the error if the table is there.
         db.session.rollback()

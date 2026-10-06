@@ -1,4 +1,5 @@
 """Unit tests for the /healthz endpoint (SQLite, no environment variables)."""
+
 import tempfile
 import unittest
 from unittest import mock
@@ -12,11 +13,13 @@ from votingweb.models import button
 class HealthzTests(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
-        self.app = create_app({
-            "SQLALCHEMY_DATABASE_URI": f"sqlite:///{self.tmp.name}/test.db",
-            "SECRET_KEY": "test",
-            "TESTING": True,
-        })
+        self.app = create_app(
+            {
+                "SQLALCHEMY_DATABASE_URI": f"sqlite:///{self.tmp.name}/test.db",
+                "SECRET_KEY": "test",
+                "TESTING": True,
+            }
+        )
         self.client = self.app.test_client()
 
     def tearDown(self):
@@ -27,8 +30,7 @@ class HealthzTests(unittest.TestCase):
 
     def counters(self):
         with self.app.app_context():
-            return [(r.btn_1, r.btn_2)
-                    for r in db.session.execute(db.select(button)).scalars()]
+            return [(r.btn_1, r.btn_2) for r in db.session.execute(db.select(button)).scalars()]
 
     def test_healthy_returns_200_ok(self):
         response = self.client.get("/healthz")
@@ -47,8 +49,7 @@ class HealthzTests(unittest.TestCase):
     def test_database_failure_returns_503_without_details(self):
         secret = "mysql+pymysql://user:s3cret@db-host:3306/votes"
         error = OperationalError("SELECT 1", {}, Exception(secret))
-        with mock.patch("votingweb.routes.db.session.execute",
-                        side_effect=error):
+        with mock.patch("votingweb.routes.db.session.execute", side_effect=error):
             response = self.client.get("/healthz")
         self.assertEqual(response.status_code, 503)
         body = response.get_json()
@@ -59,8 +60,7 @@ class HealthzTests(unittest.TestCase):
 
     def test_recovers_after_failure(self):
         error = OperationalError("SELECT 1", {}, Exception("boom"))
-        with mock.patch("votingweb.routes.db.session.execute",
-                        side_effect=error):
+        with mock.patch("votingweb.routes.db.session.execute", side_effect=error):
             self.assertEqual(self.client.get("/healthz").status_code, 503)
         self.assertEqual(self.client.get("/healthz").status_code, 200)
 

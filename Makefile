@@ -13,7 +13,7 @@ HOST ?= 127.0.0.1
 PORT ?= 5000
 
 .DEFAULT_GOAL := help
-.PHONY: help install run up down logs reset test test-integration check
+.PHONY: help install run up down logs reset lint test test-integration check
 
 help: ## List the available targets
 	@echo "Usage: make <target>"
@@ -58,10 +58,14 @@ logs: ## Follow the Compose stack logs
 reset: ## Stop the Compose stack and delete its volumes (all votes are lost)
 	$(COMPOSE) down -v
 
+lint: $(STAMP) ## Lint and check formatting with Ruff
+	$(VPY) -m ruff check .
+	$(VPY) -m ruff format --check .
+
 test: $(STAMP) ## Run the unit tests (SQLite, no Docker needed)
 	$(VPY) -m pytest tests/unit
 
 test-integration: ## Run the integration tests against a throwaway MySQL (needs Docker)
 	tests/integration/run.sh
 
-check: test ## Run every local quality gate (unit tests; lint will be added when present)
+check: lint test ## Run every local quality gate (lint and unit tests)

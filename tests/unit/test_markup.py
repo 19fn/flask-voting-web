@@ -1,4 +1,5 @@
 """Structure and accessibility checks for the rendered voting page."""
+
 import re
 import unittest
 from collections import Counter
