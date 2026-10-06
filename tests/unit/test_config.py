@@ -19,7 +19,9 @@ class ConfigTests(unittest.TestCase):
         env = {k: v for k, v in os.environ.items() if k not in DB_VARS + ("FLASK_SECRET_KEY",)}
         result = subprocess.run(
             [sys.executable, "-c", "import votingweb, votingweb.models, votingweb.routes"],
-            env=env, capture_output=True, text=True,
+            env=env,
+            capture_output=True,
+            text=True,
         )
         self.assertEqual(result.returncode, 0, result.stderr)
 
@@ -35,7 +37,9 @@ class ConfigTests(unittest.TestCase):
             )
 
     def test_db_port(self):
-        with self.clean_env(DB_HOST="db", DB_PORT="3307", DB_NAME="v", DB_USER="u", DB_PASSWORD="p"):
+        with self.clean_env(
+            DB_HOST="db", DB_PORT="3307", DB_NAME="v", DB_USER="u", DB_PASSWORD="p"
+        ):
             self.assertIn("@db:3307/", database_url_from_env())
 
     def test_missing_database_config_raises(self):

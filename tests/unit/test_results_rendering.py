@@ -1,4 +1,5 @@
 """Rendering tests for the accessible results summary."""
+
 import tempfile
 import unittest
 
@@ -9,11 +10,13 @@ from votingweb.models import COUNTERS_ID, button
 class ResultsRenderingTestCase(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
-        self.app = create_app({
-            "SQLALCHEMY_DATABASE_URI": f"sqlite:///{self.tmp.name}/t.db",
-            "SECRET_KEY": "test",
-            "TESTING": True,
-        })
+        self.app = create_app(
+            {
+                "SQLALCHEMY_DATABASE_URI": f"sqlite:///{self.tmp.name}/t.db",
+                "SECRET_KEY": "test",
+                "TESTING": True,
+            }
+        )
         self.client = self.app.test_client()
 
     def tearDown(self):
@@ -24,8 +27,7 @@ class ResultsRenderingTestCase(unittest.TestCase):
 
     def render(self, green, red):
         with self.app.app_context():
-            row = db.session.execute(
-                db.select(button).filter_by(id=COUNTERS_ID)).scalar_one()
+            row = db.session.execute(db.select(button).filter_by(id=COUNTERS_ID)).scalar_one()
             row.btn_1, row.btn_2 = green, red
             db.session.commit()
         return self.client.get("/").get_data(as_text=True)

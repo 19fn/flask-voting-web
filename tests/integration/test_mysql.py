@@ -1,4 +1,5 @@
 """Integration tests against a real MySQL database."""
+
 import threading
 
 import pytest

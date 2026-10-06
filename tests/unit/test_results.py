@@ -1,4 +1,5 @@
 """Unit tests for the vote totals and percentage helpers (#23)."""
+
 import unittest
 
 from votingweb.results import format_percentage, percentage, vote_results

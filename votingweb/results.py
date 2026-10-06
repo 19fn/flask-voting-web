@@ -1,4 +1,5 @@
 """Vote totals and percentage shares for the results display."""
+
 from decimal import ROUND_HALF_UP, Decimal
 
 
