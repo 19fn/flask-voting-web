@@ -22,6 +22,11 @@ and MySQL 8.4 (integration tests). Migrations live in `migrations/versions`.
   Compose `migrate` service do) because the app would otherwise refuse to start
   on a database that is not yet migrated.
 
+- The container entrypoint (`docker-entrypoint.sh`) runs `flask db upgrade`
+  once before starting the server, serialized by the lock, so a plain run of
+  the image works. Set `RUN_MIGRATIONS=0` to disable it when migrations are a
+  separate release step (the Compose stack does).
+
 ## Commands
 
 | Task | Command |

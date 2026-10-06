@@ -20,9 +20,10 @@ COPY . .
 # Set flask app environment variable
 ENV FLASK_APP="app"
 
-# Production startup only validates the schema (DB_SCHEMA_MODE=validate, the
-# default). Apply migrations first as a separate release step, with
-# DB_SCHEMA_MODE=skip: python3 -m flask db upgrade
+# The entrypoint applies migrations once at container start (under a database
+# lock) unless RUN_MIGRATIONS=0; the app then only validates the schema
+# (DB_SCHEMA_MODE=validate, the default) and never runs DDL.
+ENTRYPOINT ["sh", "/votingweb/docker-entrypoint.sh"]
 
 # Flask listens on 8080
 EXPOSE 8080
