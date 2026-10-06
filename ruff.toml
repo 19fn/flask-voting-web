@@ -3,3 +3,6 @@ target-version = "py314"
 
 [lint]
 select = ["E", "F", "W", "I", "B", "UP"]
+
+# Percent-format in test regexes is intentional (braces in the pattern).
+ignore = ["UP031"]
