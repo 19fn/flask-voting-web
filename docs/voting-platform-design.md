@@ -1,10 +1,11 @@
 # Voting platform rules, threat model and MVP boundaries
 
 - Issue: #40 (parent roadmap #13)
-- Status: **PROPOSED, pending approval by the repository owner.** Merging this
-  PR with owner approval is the approval record. Until then no downstream
-  issue may treat a rule here as final.
-- Version: 1.0-draft
+- Status: **APPROVED by the repository owner (19fn)** on PR #72: the decision
+  document, the IdP choice, and the retention and SLO defaults below (MVP).
+  Open items in section 8 (B2, B4) still need an owner answer before the
+  issues they block.
+- Version: 1.0
 
 Rule IDs (`R-xx`) are referenced by downstream tests. The last section maps
 each to the issue that must test it.
@@ -230,7 +231,7 @@ guarantee.
 | Application logs | 30 days, no ballot choices or tokens |
 | Backups | 35 days, encrypted |
 
-Values are proposed defaults the owner may change. No claim of legal
+Values are the owner-approved MVP defaults; changes need a new approval. No claim of legal
 compliance (GDPR etc.) is made without separate review.
 
 ### Targets (R-19)
@@ -245,13 +246,17 @@ compliance (GDPR etc.) is made without separate review.
 
 ## 8. Unresolved decisions (blockers)
 
-Not defaults; each needs owner answer before the named issue starts:
+Each open item needs an owner answer before the named issue starts:
 
-1. B1 (blocks #44): which IdP/tenant is used in production.
+1. B1 (blocks #44): RESOLVED. Microsoft Entra ID is the production IdP
+   (OIDC). The tenant ID is deployment configuration.
 2. B2 (blocks #47, #55): quorum on/off defaults and tie resolution process.
-3. B3 (blocks #63): retention periods in section 7, legal review.
+3. B3 (blocks #63): RESOLVED. Retention periods in section 7 approved as MVP
+   defaults. Legal review is still required before any compliance claim.
 4. B4 (blocks #53/#54): whether secret-ballot mode is needed at all for MVP.
-5. B5 (blocks #62): confirmation of RPO/RTO and capacity targets.
+   Anonymous mode stays disabled meanwhile.
+5. B5 (blocks #62): RESOLVED. Targets in section 7 (R-19) approved as MVP
+   defaults.
 
 ## 9. Rule-to-test map (R-20)
 
