@@ -5,6 +5,7 @@ exactly like the app. Run them through ``tests/integration/run.sh``.
 """
 
 import pytest
+from sqlalchemy import text
 
 from votingweb import create_app, db
 
@@ -29,6 +30,8 @@ def clean_database():
     app = new_app(INIT_DB=False)
     with app.app_context():
         db.drop_all()
+        db.session.execute(text("DROP TABLE IF EXISTS alembic_version"))
+        db.session.commit()
     stop_app(app)
     yield
 
